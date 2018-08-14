@@ -1,0 +1,173 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/layer/layer.js"></script>
+{include file="common/share"}
+<style>
+	.edit-address a{
+	    font-size: 36px;
+    	line-height: 120px;
+	}
+</style>
+<body>
+	<div class="shangbu_qd">
+		<div class="tou ">
+			<div class="tou_left">
+				<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+			</div>
+			<div class="tou_wenbenyu2">信息确认</div>
+		</div>
+	</div>
+	<div class="dizhi">
+		<div class="dibiao"><img src="/static/home/img/dibiao.jpg" width="43" height="48" /></div>
+		<div class="dizhi2">
+			{notempty name="address"}
+			<div class="dizhi3">修改收货信息</div>
+			<div class="dizhi4">{$address.address}{$address.unit}</div>
+			{else}
+			<div class="edit-address"><a href="{:url('order_edit_address',['ids'=>$ids])}">完善地址信息</a></div>
+			{/notempty}
+		</div>
+		<a href="{:url('order_edit_address',['ids'=>$ids])}">
+			<div class="jiantou2"><img src="/static/home/img/jiantou.jpg" width="40" height="71" /></div>
+		</a>
+	</div>
+	<div class="dixian"></div>
+	<div class="fangshi">
+		<div class="fukuanfangshi">
+			<div class="fukuanfangshi2">付款方式</div>
+			<div class="jiantou3">在线微信</div>
+		</div>
+		<div class="fukuanfangshi">
+			<div class="fukuanfangshi2">优惠券</div>
+			<div class="youcejiantou">
+				<a href="{:url('order_edit_coupon',['ids'=>$ids])}">
+					<div class="jiantou2"><img src="/static/home/img/jiantou.jpg" width="40" height="71" /></div>
+				</a>
+				<div class="fukuanfangshi3">{$coupon_title|default="没有优惠券"}</div>
+			</div>
+		</div>
+		<div class="fukuanfangshi">
+			<div class="fukuanfangshi2">备&nbsp;&nbsp;&nbsp;&nbsp;注</div>
+			<div class="youcejiantou">
+				<a href="{:url('order_edit_remark',['ids'=>$ids])}">
+					<div class="jiantou2"><img src="/static/home/img/jiantou.jpg" width="40" height="71" /></div>
+				</a>
+				<div class="fukuanfangshi3"></div>
+			</div>
+		</div>
+		<div class="qingdan2">您的清单</div>
+		
+		{volist name="data" id="vo"}
+		<div class="tuijianyao">
+			<div class="tuijianyao_left">
+				<a href="javascript:void(0);">
+					<img src="{$vo.product.image}" width="388" height="244" border="0" />
+				</a>
+			</div>
+			<div class="tuijianyao_right">
+				<div class="right_1">{$vo.product.title}</div>
+				<div class="right_2">{$vo.product.description}</div>
+				<div class="right_3">立省{$vo.product_left_price}元</div>
+				<div class="jiage_zj">
+					<div class="right_4_jg">¥ {$vo.product.price}元</div>
+					<div class="shumu">×{$vo.count}</div>
+				</div>
+			</div>
+		</div>
+		{/volist}
+		
+		<div class="tj_neirong2"></div>
+		<div class="footer">
+			<div class="jiesuanjiagex"><span class="zongjijia">总计：¥ {$total_price}元</span> &nbsp;&nbsp; <span class="youhuix">已优惠：<s>¥{$left_price}</s>元</span></div>
+			<a href="javascript:;" id="subbtn" data-ptice="{$total_price}">
+				<div class="anniu_qqdd">确定提交</div>
+			</a>
+		</div>
+	</div>
+	<script>
+		var success_url = "{:url('order_index',['status'=>'all'])}";
+		var queryOrderUrl = "{:url('order_query')}";
+		var order_id = 0;
+		var paydata = {};
+		var ids = "{$ids}";
+		// {notempty name="address"}
+		
+		var is_address = true;
+		var address_id = {$address.id};
+		
+		// {else} 
+		
+		var is_address = false;
+		var address_id = 0;
+		
+		//{/notempty}
+		
+		var coupon_id = {$coupon_id};
+		var postUrl = "{:url('order_create_save')}";
+		$(function(){
+			var click = false;
+			$("#subbtn").click(function(){
+				if(click){
+					return ;
+				}
+				if(!is_address){
+					layer.open({content: '收货地址信息必须填写',skin:'msg',time: 2});
+					return false;
+				}
+				click = true;
+				var loading = layer.open({type: 2,shadeClose:false});
+				$.post(postUrl,{ids:ids,address_id:address_id,coupon_id:coupon_id},function(res){
+					layer.close(loading);
+					if(res.errcode == 0){
+						// 创建订单成功 需要返回order_number
+						console.log(res);
+						order_id = res.order_id;
+						paydata = res.paydata;
+						callpay();
+					}else{
+						layer.open({
+						    content: res.errmsg?res.errmsg:'创建订单失败'
+						    ,btn: '我知道了'
+						});
+					}
+				},'json');
+			});
+		});
+		
+		function callpay(){
+			if (typeof WeixinJSBridge == "undefined"){
+			   	if( document.addEventListener ){
+			       	document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+			   	}else if (document.attachEvent){
+			       	document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+			       	document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+			   	}
+			}else{
+            	onBridgeReady();
+        	}
+		}
+		
+		function onBridgeReady(){
+		   	WeixinJSBridge.invoke('getBrandWCPayRequest',paydata,function(res){     
+			   	if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+				   // orderQuery();
+				   // 直接跳转支付成功页面
+				   $.getJSON(queryOrderUrl+'/'+order_id);
+				   window.location.href=success_url;
+				   layer.open({content: '收货地址信息必须填写',skin:'msg',time: 2,end:function(){window.location.href = success_url;}});
+	           	}else if(res.err_msg == "get_brand_wcpay_request:cancel"){
+	           		click = false;
+	           	}else if(res.err_msg == "get_brand_wcpay_request:fail"){
+	        	   	alert('支付失败!');
+	        	   	click = false;
+	           	}else{
+	        	   	alert(res.err_msg);
+	        	   	click = false;
+	           	}   
+		   	}); 
+		}
+		
+	</script>
+</body>
+
+</html>

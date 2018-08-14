@@ -1,0 +1,92 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__ADMIN__/css/assets.css" />
+{/block}
+{block name="main"}
+<div class="box_form">
+    <div class="box_content">
+        <form action="{:url('')}" class="layui-form layui-form-pane" id="admin">
+            <div class="layui-form-item">
+                <label class="layui-form-label">优惠券类型</label>
+                <div class="layui-input-inline">
+                    <select name="cat_id" lay-verify="required">
+                        <option value="">请选择</option>
+                        {foreach name='coupon_category' item='vo'}
+                        <option {eq name="info.cat_id" value="$vo.id"} selected {/eq} value="{$vo.id}">{$vo.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="title" value="{$info.title|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-upload">
+                    <label class="layui-form-label">图片</label>
+                    <div class="layui-input-inline">
+                        <button type="button" class="layui-btn and-bg-{$skin_name|default='default'} upload_one">上传图片</button>
+                        <input type="hidden" name="image" value="{$info.image|default=''}">
+                        <div class="layui-upload-list">
+                            <img class="layui-upload-img" {notempty name="info.image"} src="{$info.image|default=''}"{/notempty} width="150" height="150">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">描述</label>
+                <div class="layui-input-inline">
+                    <textarea name="description" placeholder="请输入内容" class="layui-textarea">{$info.description|default=''}</textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">有效日期</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="validity_time" value="{notempty name='info.validity_time'}{$info.validity_time|date='Y-m-d'}{/notempty}"  placeholder="请选择日期" date_format="yyyy-MM-dd" date_type="date" autocomplete="off" class="layui-input date">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">使用时长</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="use_length" value="{$info.use_length|default='0'}" lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">单位（天） 请输入数字</div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">优惠金额</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="amount" value="{$info.amount|default='0'}" lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="status" {eq name="info.status" value="1"}checked{/eq} title="开启" value="1" checked />
+                    <input type="radio" name="status" {eq name="info.status" value="0"}checked{/eq} title="关闭" value="0" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <input type="hidden" name="id" value="{$info.id|default=''}">
+                    <button class="layui-btn and-bg-{$skin_name|default='default'}" lay-submit lay-filter="info_submit">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+<script type="text/javascript">
+    layui.use('info')
+</script>
+{/block}

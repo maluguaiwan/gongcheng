@@ -1,0 +1,43 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+{include file="common/share"}
+    <style type="text/css">
+        <!--
+        body {
+            background-color: #FFFFFF;
+        }
+        -->
+    </style></head>
+
+<body>
+<div class="shangbu" style="height: 135px;">
+    <div class="tou ">
+        <div class="tou_left"><a href="#" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a></div>
+        <div class="tou_wenbenyu2">提现记录</div>
+    </div>
+</div>
+<div class="tuijian_fenlei2x">
+    <div class="sousuoxx">
+        <form action="{:url('/member/memberBankWater')}" method="get">
+            <div class="sousuox1">
+                <input name="start_time" type="date" class="tou_wenbenkuang_1" placeholder="开始日期" value="{$Think.get.start_time|default=''}" />&nbsp;&nbsp; 至&nbsp;&nbsp;
+                <input name="end_time" type="date" class="tou_wenbenkuang_1" placeholder="结束日期" value="{$Think.get.end_time|default=''}" />
+            </div>
+            <div class="sousuox2">
+                <!--<div class="ssss">筛选</div>-->
+                <input class="ssss" type="submit" value="筛选">
+            </div>
+        </form>
+    </div>
+    <div class="tongji">该时间段：共申请提现¥ {$total_amount}元</div>
+    {foreach name='list' item='vo'}
+    <div class="liebiaoxx">
+        <div class="liebiao_22">
+            <div class="liebiao_nc">{$vo.create_time|substr=0,16}</div>
+            <div class="liebiao_js">申请提现：¥{$vo.money}  | {eq name='vo.if_pay' value='1'}提现成功{else}审核中{/eq}</div>
+        </div>
+    </div>
+    {/foreach}
+</div>
+</body>
+</html>

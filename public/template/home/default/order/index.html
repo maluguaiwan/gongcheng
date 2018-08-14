@@ -1,0 +1,99 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+{include file="common/share"}
+<style>
+	.layui-flow-more{
+		font-size: 2.5em;
+	}
+	.order-item .num{
+		padding: 20px;
+		font-size: 2em;
+	}
+	.order-status{
+		height: 2em;
+    	padding: 1em;
+	}
+	.xiaoliang2{
+		width: 19%;
+	}
+	.jiagehong{
+		width: 400px;
+	}
+	.moren2,.dpingjia2,.jiage2{
+		width: 20%;
+	}
+	.sort a{
+	    color: initial;
+	}
+	.biaoti .active a{
+		color: red;
+	}
+</style>
+	<body>
+		<div class="shangbu">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">我的订单</div>
+			</div>
+			<div class="biaoti">
+				<div class="sort moren2 {eq name='status' value='all'} active {/eq}" data-status="all"><a href="{:url('order_index',['status'=>'all'])}">全部</a></div>
+				<div class="sort moren2 {eq name='status' value='wait'} active {/eq}" data-status="wait"><a href="{:url('order_index',['status'=>'wait'])}">待付款</a></div>
+				<div class="sort xiaoliang2 {eq name='status' value='ship'} active {/eq}" data-status="ship"><a href="{:url('order_index',['status'=>'ship'])}">待发货</a></div>
+				<div class="sort dpingjia2 {eq name='status' value='receipt'} active {/eq}" data-status="receipt"><a href="{:url('order_index',['status'=>'receipt'])}">待收货</a></div>
+				<div class="sort jiage2 {eq name='status' value='comment'} active {/eq}" data-status="comment"><a href="{:url('order_index',['status'=>'comment'])}">待评价</a></div>
+			</div>
+		</div>
+		<div class="tuijian_fenlei2">
+			{notempty name="data"}
+				{foreach name="data" id="vo"}
+				<div class="order-item">
+					<div class="num">
+						订单号：{$vo.order_number}   | 订单状态：{$vo.status|get_order_status}
+					</div>
+					<div class="product-list" onclick="window.location.href='{$vo.order_detail}'">
+						{foreach name="$vo.products" id="product"}
+						<div class="tuijianyao">
+							<div class="tuijianyao_left">
+								<img src="{$product.product.image}" width="388" height="244" border="0" />
+							</div>
+							<div class="tuijianyao_right">
+								<div class="right_1">{$product.product.title}</div>
+								<div class="right_2">{$product.product.description}</div>
+								<div class="right_3">立省{$product.left_price}元
+								{eq name="$vo.status" value="3"}
+									<a class="zhuangtai" href="{:url('medicine_comment',['id'=>$product['product_id']])}" style="color: #fff;float: right;">去评价</a>
+								{/eq}
+								</div>
+								<div class="right_4">
+									<div class="jiagehong">¥ {$product.product.price}元<span class="huagang">&nbsp;&nbsp;&nbsp;&nbsp;<s>¥ {$product.product.originnal_price}元</s></span></div>
+								</div>	
+								
+							</div>
+						</div>
+						{/foreach}
+					</div>
+					<div class="order-status">
+						{switch $vo.status }
+						{case 0 }
+						<a href="javascript:;" id="subbtn" data-ptice=""><div class="zhuangtai">立即付款</div></a>
+						{/case}
+						{case 2}  <!--完成订单状态改为4-->
+						<a href="javascript:;" id="subbtn" data-ptice=""><div class="zhuangtai">完成订单</div></a>
+						{/case}
+						{default /}
+						{/switch}
+					</div>
+				</div>
+				
+				{/foreach}
+			{else}
+			<div class="tuijianyao">
+				<p style="text-align: center;font-size: 2em;">暂无订单</p>
+			</div>
+			{/notempty}
+		</div>
+		{include file="common/footer"}
+	</body>
+</html>

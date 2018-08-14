@@ -1,0 +1,152 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/layer/layer.js"></script>
+{include file="common/share"}
+<style type="text/css">
+	body {
+		background-color: #FFFFFF;
+	}
+	.layui-m-layercont{
+		font-size: 2.5em;
+	    padding: 2.5rem 5rem !important;
+	}
+</style>
+	<body>
+		<div class="shangbu_qd">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">绑定银行卡</div>
+			</div>
+
+		</div>
+		<div class="tuijian_fenlei2_qdx">
+			<input type="hidden" name="member_id" id="member_id" value="{$member.id}"/>
+			<div class="tuijianyao">
+				<div class="yinhang">绑定信息</div>
+				<div class="wenbenx">
+					<div class="wenbenx1">银行卡号</div>
+					<div class="wenbenx2"><input type="text" name="bank_number" id="bank_number" value="{$info.bank_number}" class="xiewenben" /></div>
+				</div>
+				<div class="wenbenx">
+					<div class="wenbenx1">开户银行</div>
+					<div class="wenbenx2"><input type="text" name="bank_name" id="bank_name" value="{$info.bank_name}" class="xiewenben" /></div>
+				</div>
+				<div class="wenbenx">
+					<div class="wenbenx1">开户支行</div>
+					<div class="wenbenx2"><input type="text" name="bank_branch_name" id="bank_branch_name" value="{$info.bank_branch_name}" class="xiewenben" /></div>
+				</div>
+				<div class="wenbenx">
+					<div class="wenbenx1">开户姓名</div>
+					<div class="wenbenx2"><input type="text" name="bank_username" id="bank_username" value="{$info.bank_username}" class="xiewenben" /></div>
+				</div>
+				<div class="wenbenx">
+					<div class="wenbenx1">验证码</div>
+					<div class="wenbenx2"><input type="text" name="verify" id="verify" value="" class="xiewenben" /></div>
+				</div>
+				<div class="wenbenx" style="text-align: right;">
+					<button type="button" id="send" style="font-size: 2em;">索取验证</button>
+				</div>
+				<div class="baocun">
+					<a href="javascript:;">
+						<div class="anniubaocun" id="subbtn">绑定银行卡</div>
+					</a>
+				</div>
+			</div>
+		</div>
+		<script>
+			var postUrl="{:url('member_bank_bind')}";
+			var smsUrl="{:url('send_sms_bank')}";
+			$(function(){
+				
+				var countdown=60;
+				function settime(obj){
+					if (countdown == 0) {
+				        obj.prop("disabled",false);
+				        obj.text("发送验证码");
+				        countdown = 60;
+				        return;
+				    } else { 
+				        obj.prop("disabled",true);
+				        obj.text("重新发送(" + countdown + ")");
+				        countdown--; 
+				    }
+				    setTimeout(function() { 
+				    	settime(obj) 
+				    },1000)
+				}
+				
+				$("#send").click(function(){
+					var self = $(this);
+					$.post(smsUrl).done(function(res){
+						if(res.errcode == 0){
+							layer.open({content:'发送成功',skin:'msg',time: 2});
+							settime(self);
+						}else{
+							layer.open({content:res.errmsg?res.errmsg:'',skin:'msg',time: 2});
+						}
+					});
+					settime($(this));
+				});
+				
+				$("#subbtn").click(function(){
+					var bank_number = $.trim($("#bank_number").val());
+					var bank_name = $("#bank_name").val();
+					var bank_branch_name = $("#bank_branch_name").val();
+					var bank_username = $("#bank_username").val();
+					if(!bank_number){
+						layer.open({content: '银行卡号不能为空',skin:'msg',time: 2});
+						return false;
+					}
+					if(bank_number.length < 16 || bank_number.length > 19) {
+						layer.open({content: '银行卡号长度必须在16到19之间',skin:'msg',time: 2});
+					     return false;
+					}
+					var num = /^\d*$/; //全数字
+					if(!num.exec(bank_number)) {
+						layer.open({content: '银行卡号必须全为数字',skin:'msg',time: 2});
+					    return false;
+					}
+					if(!bank_name){
+						layer.open({content: '开户银行名不能为空',skin:'msg',time: 2});
+						return false;
+					}
+					if(!bank_branch_name){
+						layer.open({content: '开户银行支行名不能为空',skin:'msg',time: 2});
+						return false;
+					}
+					if(!bank_username){
+						layer.open({content: '开户姓名不能为空',skin:'msg',time: 2});
+						return false;
+					}
+					var loading = layer.open({type: 2,shadeClose:false});
+					var postData = {
+						bank_number:bank_number,
+						bank_name:bank_name,
+						bank_branch_name:bank_branch_name,
+						bank_username:bank_username,
+						verify:$("#verify").val(),
+						member_id:$("#member_id").val()
+					};
+					$.post(postUrl,postData,function(res){
+						layer.close(loading);
+						if(res.errcode == 0){
+							layer.open({
+							    content: '绑定银行卡成功'
+							    ,skin: 'msg'
+							    ,time: 2
+							    ,end:function(){
+							    	history.back();
+							    }
+							});
+						}else{
+							alert(res.errmsg?res.errmsg:'绑定失败');
+						}
+					},'json');
+				});
+			});
+		</script>
+	</body>
+
+</html>

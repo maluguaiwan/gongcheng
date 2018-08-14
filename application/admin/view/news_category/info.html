@@ -1,0 +1,47 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__ADMIN__/css/assets.css" />
+{/block}
+{block name="main"}
+<div class="box_form">
+    <div class="box_content">
+        <form action="{:url('')}" class="layui-form layui-form-pane" id="admin">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">标题</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="name" value="{$info.name|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">排序</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="sort" value="{$info.sort|default='50'}" lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否显示</label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="status" {eq name="info.status" value="1"}checked{/eq} title="显示" value="1" checked />
+                    <input type="radio" name="status" {eq name="info.status" value="0"}checked{/eq} title="关闭" value="0" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <input type="hidden" name="id" value="{$info.id|default=''}">
+                    <button class="layui-btn and-bg-{$skin_name|default='default'}" lay-submit lay-filter="info_submit">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+<script type="text/javascript">
+    layui.use('info')
+</script>
+{/block}

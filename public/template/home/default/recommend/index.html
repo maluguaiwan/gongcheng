@@ -1,0 +1,56 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+{include file="common/share"}
+<style type="text/css">
+	body {
+		background-color: #FFFFFF;
+	}
+</style>
+	<body>
+		<div class="shangbu" style="height: 135px;">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">推广中心</div>
+			</div>
+		</div>
+		<div class="tuijian_fenlei2x">
+			<div class="tichengzhanshi">
+				<div class="tichengzhanshi_1">余额：¥{$member.amount}元</div>
+				<div class="tichengzhanshi_2">总订单：{$tmp.reward_order_count}个<br /> 下属推荐人共：{$tmp.reward_parent_count}个
+				</div>
+				<a href="{:url('member_withdraw')}">
+					<div class="tichengzhanshi_3" style="height: 110px;">提现</div>
+				</a>
+			</div>
+			<div class="sousuoxx">
+				<form action="{:url('/recommend/index')}" method="get">
+					<div class="sousuox1">
+						<input name="start_time" type="date" class="tou_wenbenkuang_1" placeholder="开始日期" value="{$Think.get.start_time|default=''}" />&nbsp;&nbsp; 至&nbsp;&nbsp;
+						<input name="end_time" type="date" class="tou_wenbenkuang_1" placeholder="结束日期" value="{$Think.get.end_time|default=''}" />
+					</div>
+					<div class="sousuox2">
+						<!--<div class="ssss">筛选</div>-->
+						<input class="ssss" type="submit" value="筛选">
+					</div>
+				</form>
+			</div>
+			<div class="tongji">该时间段：总提成¥ {$total_amount}元</div>
+			<!--<div class="liebiaoxx">
+				<p style="text-align: center;">暂无提成</p>
+			</div>-->
+			{foreach name='list' item='vo'}
+			<div class="liebiaoxx">
+				<div style="font-size: 18px;">
+					姓名：{$vo.name}<br>
+					微信昵称：{$vo.nickname}<br>
+					提成金额：{$vo.money}<br>
+					时间：{$vo.create_time}<br>
+					描述：{$vo.description}
+				</div>
+			</div>
+			{/foreach}
+		</div>
+	</body>
+</html>

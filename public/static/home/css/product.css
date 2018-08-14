@@ -1,0 +1,329 @@
+* {
+	padding: 0;
+	margin: 0;
+}
+
+.payout {
+	color: #a5a5a5;
+	font-family: "微软雅黑";
+	font-size: 14px;
+}
+
+.payout .top {
+	background: #4cb131;
+	padding: 7% 0;
+	text-align: center;
+	margin-bottom: 3%;
+}
+
+.payout .top img {
+	width: 47%;
+}
+
+.payout .top p {
+	padding-top: 5%;
+	color: #fff;
+}
+
+.payout .bom {
+	width: 94%;
+	margin: auto;
+}
+
+.payout .bom .btn {
+	display: block;
+	background: #4cb131;
+	color: #fff;
+	width: 100%;
+	line-height: 230%;
+	border: none;
+	border-radius: 5px;
+	font-size: 120%;
+	margin-top: 8%;
+	height: 40px;
+}
+
+.payout .bom .checkbox {
+	font-size: 16px;
+	line-height: 12px;
+}
+
+.payout .bom .checkbox input {
+	display: none;
+}
+
+.payout .bom .checkbox span.border {
+	width: 14px;
+	height: 14px;
+	border: #a5a5a5 1px solid;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 10px;
+}
+
+.payout .bom .checkbox.checked span.border {
+	background: url(/public/home/common/img/checked.jpg) center center no-repeat;
+	background-size: 100% 100%;
+}
+
+.payout .tip {
+	position: fixed;
+	bottom: 15px;
+	left: 0;
+	width: 100%;
+	text-align: center;
+	font-size: 80%;
+}
+
+.payout .bom .checkbox span.open {
+	font-size: 16px;
+}
+
+.payout .mask {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(0, 0, 0, 0.5);
+	text-align: center;
+	color: #fff;
+	display: none;
+}
+
+.payout .mask p {
+	padding-top: 50%;
+}
+
+.box {
+	font-family: "微软雅黑";
+	color: #727171;
+	font-size: 18px;
+}
+
+
+/*.box .top{text-align: center;}*/
+
+.box .top .tit {
+	font-size: 150%;
+	color: #00b7ee;
+	font-weight: bold;
+	padding: 8% 4% 5%;
+	text-align: center;
+}
+
+.box .top p {
+	text-align: center;
+	color: #555;
+}
+
+
+/*.box .top span{color: #ed6c00;}*/
+
+.box .top .tip {
+	font-size: 90%;
+}
+
+.box .bom {
+	padding-top: 6%;
+	font-size: 90%;
+	color: #00b7ee;
+}
+
+.box .bom .ewm {
+	width: 60%;
+	margin: 0 auto;
+	display: block;
+	padding-top: 10%;
+}
+
+.border_list {
+	border-bottom: #d8e3f2 1px solid;
+	padding: 3% 4%;
+	position: relative;
+	height: 18px;
+}
+
+.order-btn {
+	font-size: 0.3rem;
+	width: 35%;
+	background: #00b7ee;
+	margin: 0 auto;
+	color: #fff;
+	text-align: center;
+	line-height: 220%;
+	border-radius: 5px;
+	margin-bottom: 3%;
+	border: 0px;
+}
+
+.hr-box {
+	width: 100%;
+	height: 15px;
+	background-color: #f0f0f0;
+	border-top: 1px solid #d9d9d9;
+	border-bottom: 1px solid #d9d9d9;
+}
+
+.data-content li {
+	overflow: hidden;
+	padding: 0.25rem;
+	margin-bottom: 0.2rem;
+	background: #fff;
+}
+
+.data-content .crntent-header {
+	font-size: 0.3rem;
+}
+
+.crntent-body {
+	overflow: hidden;
+	margin: 0.2rem auto;
+	background: #fafafa;
+}
+
+.crntent-body-img {
+	float: left;
+	width: 1.5rem;
+	height: 1.5rem;
+	background: no-repeat center center;
+	background-size: cover;
+}
+
+.crntent-body-text {
+	float: left;
+	font-size: 0.28rem;
+	text-align: left;
+	margin-left: 0.5rem;
+}
+
+.crntent-body-text p {
+	line-height: 1.5em;
+	margin: 0.1rem 0;
+	color: #666;
+}
+
+.crntent-footer {
+	font-size: 0.26rem;
+}
+
+.crntent-footer span {
+	float: left;
+	color: #666;
+	height: 0.5rem;
+	line-height: 0.5rem;
+}
+
+.order-content {
+	overflow: hidden;
+	padding: 10px;
+	background: #fff;
+	border: 1px solid #e8d7d7;
+}
+
+.order-content p {
+	margin: 5px 0;
+}
+
+.qrcode {
+	margin-top: 20px;
+	padding-top: 20px;
+	border-top: 1px dashed #999;
+	position: relative;
+	text-align: center;
+}
+
+.qrcode img {
+	display: none;
+	width: 60px;
+	height: 60px;
+	position: absolute;
+	top: -30px;
+	right: 0;
+	z-index: 1;
+}
+
+.order-header .yzm {
+	width: 80%;
+	font-size: 16px;
+	color: #666;
+	margin: 5px 10% 15px;
+	text-align: center;
+	background: #f7f7f7;
+	padding: 5px 0;
+	border-radius: 4px;
+}
+
+#qrcode {
+	width: 170px;
+	height: 170px;
+	margin: 5px auto;
+	border: 1px solid #999;
+	border-radius: 4px;
+}
+
+#qrcode canvas {
+	width: 150px;
+	height: 150px;
+	margin: 10px;
+}
+
+.qrcode.over {
+	opacity: 0.4 !important;
+}
+
+.qrcode.over img {
+	display: block;
+}
+
+.order-header {
+	background: #fff;
+	overflow: hidden;
+	width: 95%;
+	margin: 10px 2.5%;
+	padding: 10px;
+	border: 1px solid #fffffd;
+	border-radius: 3px;
+	box-sizing: border-box;
+}
+
+.order-header p {
+	font-size: 16px;
+	line-height: 1.5em;
+	margin: 5px 0;
+}
+
+.payButton {
+	width: 90%;
+	margin: 15px 5%;
+	background: #3399cc;
+	color: #fff;
+	text-align: center;
+	border: none;
+	height: 40px;
+	line-height: 40px;
+	font-size: 16px;
+	border-radius: 5px;
+}
+
+.gobuy-header {
+	color: #a3a3a3;
+	font-size: 0.28rem;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #eee;
+}
+
+.gobuy .detail-title {
+	color: #3399cc;
+	font-size: 14px;
+	margin: 5px 0;
+}
+
+.gobuy .detail-content {
+	color: #999;
+	line-height: 1.5em;
+	font-size: 13px;
+	margin-bottom: 10px;
+}
+

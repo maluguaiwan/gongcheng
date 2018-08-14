@@ -1,0 +1,125 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+{include file="common/share"}
+	<body>
+		<div class="shangbu">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="{:url('home_index')}"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">会员中心</div>
+			</div>
+		</div>
+		<div class="huitou">
+			<div class="tx_zuo"><img src="{$member.headimgurl|default='/static/home/img/default_head.png'}" class="imgtu" /></div>
+			<div class="tx_you">
+				<div class="nicheng2">{$member.name}</div>
+				{empty name="$member.mobile"}
+				<div class="dianhua">未绑定手机号(<a href="{:url('member_mobile_bind')}" class="btn btn-yellow">立即绑定</a>)</div>
+				{else}
+				<div class="dianhua">{$member.mobile}</div>
+				{/empty}
+			</div>
+		</div>
+		<div class="huitou2">
+			<div class="huitou2_zuox">
+				{eq name="is_doctor" value="0"}
+				<a href="{:url('member_doctor')}"><img src="/static/home/img/yaoshi.jpg" width="231" height="67" border="0" /></a>{if condition="$message_count > 0"}（{$message_count}条未读信息）{/if}</div>
+				{else}
+				<a href="{:url('member_list')}"><img src="/static/home/img/huanzhe.jpg" width="231" height="67" border="0" /></a>{if condition="$message_count > 0"}（{$message_count}条未读信息）{/if}</div>
+				{/eq}
+			<div class="huitou2_you online-kefu"><img src="/static/home/img/kefu.jpg" width="231" height="67" /></div>
+		</div>
+		</div>
+		{eq name="is_doctor" value="0"}
+		<div class="shuomingshu">我的订单</div>
+		<div class="dd_nr">
+			<div class="dd_nr1">
+				<a href="{:url('order_index',['status'=>'wait'])}"><img src="/static/home/img/dfk.jpg" border="0" /></a>
+			</div>
+			<div class="dd_nr1">
+				<a href="{:url('order_index',['status'=>'ship'])}"><img src="/static/home/img/dfh.jpg" border="0" /></a>
+			</div>
+			<div class="dd_nr1">
+				<a href="{:url('order_index',['status'=>'receipt'])}"><img src="/static/home/img/dsh.jpg" border="0" /></a>
+			</div>
+			<div class="dd_nr1">
+				<a href="{:url('order_index',['status'=>'comment'])}"><img src="/static/home/img/dpj.jpg" border="0" /></a>
+			</div>
+		</div>
+		<div class="shuomingshu">快捷功能</div>
+		<div class="dd_nr2">
+			<div class="dd_nr1">
+				<a href="{:url('member_address')}"><img src="/static/home/img/kuaijie1.jpg" width="114" height="100" border="0" /></a>
+			</div>
+			<div class="dd_nr1">
+				<a href="{:url('member_coupon')}"><img src="/static/home/img/kuaijie12.jpg" border="0" /></a>
+			</div>
+			<div class="dd_nr1">
+				<a href="{:url('recommend_index')}"><img src="/static/home/img/kuaijie13.jpg" border="0" /></a>
+			</div>
+			<div class="dd_nr1">
+				<a href="{:url('member_doctor')}"><img src="/static/home/img/kuaijie14.jpg" border="0" /></a>
+			</div>
+		</div>
+		<div class="dd_nr2">
+			<div class="dd_nr1">
+				<a href="{:url('help_index')}"><img src="/static/home/img/kuaijie15.jpg" border="0" /></a>
+			</div>
+			<div class="dd_nr1">
+				<a href="{:url('member_bank_bind')}"><img src="/static/home/img/kuaijie16.jpg" border="0" /></a>
+			</div>
+			<div class="dd_nr1">
+				<a href="{:url('member_withdraw')}"><img src="/static/home/img/kuaijie17.jpg" border="0" /></a>
+			</div>
+			<div class="dd_nr1">
+				<a href="{:url('member_recommend_member')}"><img src="/static/home/img/kuaijie18.jpg" border="0" /></a>
+			</div>
+		</div>
+		{else}
+		<div class="shuomingshu">快捷功能</div>
+		<div class="dd_nr2">
+			<div class="dd_nr1">
+				<a href="{:url('doctor_info')}"><img src="/static/home/img/s1.jpg" width="114" height="100" border="0" /></a>
+			</div>
+			<div class="dd_nr1">
+				<a href="{:url('recommend_index')}"><img src="/static/home/img/s2.jpg" border="0" /></a>
+			</div>
+			<div class="dd_nr1">
+				<a href="{:url('recommend_index')}"><img src="/static/home/img/s3.jpg" border="0" /></a>
+			</div>
+			<div class="dd_nr1">
+				<a href="{:url('member_doctor')}"><img src="/static/home/img/s4.jpg" border="0" /></a>
+			</div>
+		</div>
+		<div class="dd_nr2">
+			<div class="dd_nr1">
+				<a href="{:url('help_index')}"><img src="/static/home/img/s5.jpg" border="0" /></a>
+			</div>
+			<div class="dd_nr1">
+				<a href="{:url('member_bank_bind')}"><img src="/static/home/img/s6.jpg" border="0" /></a>
+			</div>
+			<div class="dd_nr1">
+				<a href="{:url('member_withdraw')}"><img src="/static/home/img/s7.jpg" border="0" /></a>
+			</div>
+			<div class="dd_nr1">
+				<a href="{:url('member_recommend_member')}"><img src="/static/home/img/s8.jpg" border="0" /></a>
+			</div>
+		</div>
+		{/eq}
+		
+		<div class="dd_nr">
+			<div class="dd_nr1">
+				<a href="{:url('member_recommend_doctor')}"><img src="/static/home/img/kuaijie18.jpg" border="0" /></a>
+			</div>
+		</div>
+		<div class="kongbai"></div>
+	</body>
+	<script>
+		$(function(){
+			$(".online-kefu").click(function(){
+				alert('功能开发中,敬请期待...');
+			});
+		})
+	</script>
+</html>

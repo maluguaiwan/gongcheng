@@ -1,0 +1,104 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__ADMIN__/css/assets.css" />
+{/block}
+{block name="main"}
+<div class="box_form">
+    <div class="box_content">
+        <div>
+            <fieldset class="layui-elem-field layui-field-title site-title">
+                <legend><a name="attr">医生信息</a></legend>
+            </fieldset>
+            <table class="layui-table">
+                <tbody>
+                {notempty name='info.faceimgurl'}
+                <tr>
+                    <td>头&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;像： <img src="{$info.faceimgurl}" height="80px"> </td>
+                </tr>
+                {/notempty}
+                <tr>
+                    <td>医生类别：{$info.category_name} </td>
+                </tr>
+                <tr>
+                    <td>描&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述：{$info.description}</td>
+                </tr>
+                <tr>
+                    <td>回答次数：{$info.answer_count} 次</td>
+                </tr>
+                <tr>
+                    <td>资讯费用：{$info.advisory_price} 元</td>
+                </tr>
+                <tr>
+                    <td>好&nbsp;评&nbsp;&nbsp;率：{$info.praise}%</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <fieldset class="layui-elem-field layui-field-title site-title">
+                <legend><a name="attr">审核信息</a></legend>
+            </fieldset>
+            <table class="layui-table">
+                <tbody>
+                <tr>
+                    <td>医生姓名：{$info.name}</td>
+                </tr>
+                <tr>
+                    <td>执业地址：{$info.province} - {$info.city}</td>
+                </tr>
+                <tr>
+                    <td>详细地址：{$info.address}</td>
+                </tr>
+                <tr>
+                    <td>诊所名称：{$info.clinic}</td>
+                </tr>
+                <tr>
+                    <td>联系方式（电话）：{$info.contact_mobile}</td>
+                </tr>
+                <tr>
+                    <td>联系方式（微信）：{$info.contact_weixin}</td>
+                </tr>
+                <tr>
+                    <td>擅长领域：{$info.description}</td>
+                </tr>
+                <tr>
+                    <td>特色疗法：{$info.tese}</td>
+                </tr>
+                {notempty name='info.faceimgurl'}
+                <tr>
+                    <td>个人照片： <img src="{$info.faceimgurl}" height="80px"> </td>
+                </tr>
+                {/notempty}
+                <tr>
+                    <td>个人简介：{$info.introduction}</td>
+                </tr>
+                {notempty name='info.medical_certificate'}
+                <tr>
+                    <td>证件照片： <img src="{$info.medical_certificate}" height="80px"> </td>
+                </tr>
+                {/notempty}
+                {notempty name='info.medical_license'}
+                <tr>
+                    <td>证件： <img src="{$info.medical_license}" height="80px"> </td>
+                </tr>
+                {/notempty}
+                {notempty name='info.clinic_photo'}
+                <tr>
+                    <td>诊所门面： <img src="{$info.clinic_photo}" height="80px"></td>
+                </tr>
+                {/notempty}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+<script type="text/javascript">
+    layui.use('info',function () {
+        var $=layui.jquery;
+        $('.title').hide();
+    })
+</script>
+{/block}

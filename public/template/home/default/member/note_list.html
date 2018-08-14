@@ -1,0 +1,46 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/layer/layer.js"></script>
+{include file="common/share"}
+	<body>
+		<div class="shangbu" style="height: auto;">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">病例备注</div>
+			</div>
+		</div>
+		<div class="tuijian_fenlei2x">
+			<div class="beizhushang">
+				<div class="ttouxiang"><img src="{$info.headimgurl}" width="226" height="150" /></div>
+				<div class="nicheng3">{$info.name}</div>
+				<div class="youwei">
+					<div class="beizhuanniu">
+						<a href="{:url('member_bingli_note',['member_id'=>$info['id']])}">给Ta备注</a>
+					</div>
+					<div class="zhuayao">
+						<a href="{:url('doctor_buy_product',['member_id'=>$info['id']])}">给Ta抓药</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="shuomingshu_nr">
+			{notempty name="list"}
+			{volist name="list" id="vo"}
+			<div class="pingjia_k">
+				<div class="pingjia_k1">
+					<div class="pingjia_tx"><img src="/static/home/img/tx_ys.jpg" width="77" height="68" /></div>
+					<div class="pingjia_nicheng">患者日志</div>
+					<div class="pingjia_time">{:substr($vo.create_time,0,10)}</div>
+				</div>
+				<div class="pingjia_k2">{$vo.description}</div>
+			</div>
+			{/volist}
+			{else}
+			<div class="pingjia_k"><p style="text-align: center;font-size: 1em;">暂无病例</p></div>
+			{/notempty}
+		</div>
+	</body>
+
+</html>

@@ -1,0 +1,32 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+{include file="common/share"}
+<style type="text/css">
+    <!--
+    body {
+        background-color: #FFFFFF;
+    }
+
+    -->
+</style>
+<body>
+<div class="shangbu_qd">
+    <div class="tou ">
+        <div class="tou_left"><a href="javascript:void(0);" onclick="javascript:history.back(-1);">
+            <img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0"/></a></div>
+        <div class="tou_wenbenyu2">在线帮助</div>
+    </div>
+</div>
+<div class="tuijian_fenlei2_qdx">
+    {foreach name='list' item='vo'}
+    <div class="ys_wenbenx_xw">
+        {notempty name='vo.url'}
+        <a href="{$vo.url}">
+        {else}
+        <a href="{:url('news',['id'=>$vo['id']])}">
+        {/notempty}
+            {$vo.title}</a></div>
+    {/foreach}
+</div>
+</body>
+</html>

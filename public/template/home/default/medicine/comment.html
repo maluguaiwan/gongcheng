@@ -1,0 +1,52 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+{include file="common/share"}
+	<body>
+		<div class="shangbu_qd">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="#" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">我要评价</div>
+			</div>
+
+		</div>
+		<div class="tuijian_fenlei2_qdx">
+			<div class="chanpinti">{$product.title}</div>
+			<form action="{:url('medicine_comment')}" id="form" method="post">
+				<input type="hidden" name="id" value="{$product.id}" />
+			<div class="tuijianyao">
+				<div class="yinhang">
+					<div class="pl">
+						<input type="radio" name="score" value="5" class="daquan" checked="checked"/> 好评&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+						<input type="radio" name="score" value="3" class="daquan" /> 一般&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+						<input type="radio" name="score" value="1" class="daquan" /> 差评
+					</div>
+				</div>
+				<div class="wenbenxx">
+					<div class="wenbenx1">评论内容</div>
+					<div class="wenbenx2"><input type="text" id="content" name="content" class="xiewenbenx" /></div>
+				</div>
+
+				<div class="baocun">
+					<div class="anniubaocun" id="subbtn">提交评论</div>
+				</div>
+				<div class="tixianbeizhu"></div>
+			</div>
+			</form>
+
+		</div>
+	</body>
+	<script>
+		var click = false;
+		$(function(){
+			$("#subbtn").click(function(){
+				if(click){
+					return false;
+				}
+				click = true;
+				$("#form").submit();
+			});
+		});
+	</script>
+</html>

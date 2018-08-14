@@ -1,0 +1,165 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/layer/layer.js"></script>
+{include file="common/share"}
+<style>
+	.edit-address a{
+	    font-size: 36px;
+    	line-height: 120px;
+	}
+</style>
+<body>
+	<div class="shangbu_qd">
+		<div class="tou ">
+			<div class="tou_left">
+				<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+			</div>
+			<div class="tou_wenbenyu2">订单详情</div>
+		</div>
+	</div>
+	<div class="dizhi" style="height: 500px;font-size: 26px;">
+		订单id：{$order.id}<br />
+		订单状态：{$order.status|get_order_status}<br />
+		订单编号：{$order.order_number}<br />
+		收货姓名：{$order.name}<br />
+		收货手机：{$order.mobile}<br />
+		收货地址：{$order.address}<br />
+		收货门牌号：{$order.unit}<br />
+		付款方式：微信<br />
+		{gt name='order.status' value='1'}
+		快递名称：{$order.courier_name}<br />
+		快递编号：{$order.courier_sn}<br />
+		{else}
+		快递状态：未发货<br />
+		{/gt}
+		是否使用优惠券：{eq name='order.coupon' value='0'}否{else}是{/eq}<br />
+		备注：{$order.note}<br />
+
+		下单时间：{$order.create_time|date='Y-m-d H:i'}<br />
+
+	</div>
+	<div class="dixian"></div>
+	<div class="fangshi">
+		<div class="qingdan2">订单商品</div>
+		{volist name="data" id="vo"}
+		<div class="tuijianyao">
+			<div class="tuijianyao_left">
+				<a href="{:url('medicine_detail',['id'=>$vo['product']['id']])}">
+					<img src="{$vo.product.image}" width="388" height="244" border="0" />
+				</a>
+			</div>
+			<div class="tuijianyao_right">
+				<div class="right_1">{$vo.product.title}</div>
+				<div class="right_2">{$vo.product.description}</div>
+				<div class="right_3">立省{$vo.product_left_price}元</div>
+				<div class="jiage_zj">
+					<div class="right_4_jg">¥ {$vo.product.price}元</div>
+					<div class="shumu">×{$vo.count}</div>
+				</div>
+			</div>
+		</div>
+		{/volist}
+		
+		<div class="tj_neirong2"></div>
+		<div class="footer">
+			<div class="jiesuanjiagex"><span class="zongjijia">总计：¥ {$total_price}元</span> &nbsp;&nbsp; <span class="youhuix">已优惠：<s>¥{$left_price}</s>元</span></div>
+			{switch $order.status }
+				{case 0 }
+					{eq name="$order.pay_status" value="0"}
+					<a href="javascript:;" id="repay" data-ptice="{$total_price}"><div class="anniu_qqdd">立即付款</div></a>
+					{/eq}
+				{/case}
+				{case 2}  <!--完成订单状态改为4-->
+					<a href="javascript:;" id="update" data-ptice="{$total_price}"><div class="anniu_qqdd">完成订单</div></a>
+				{/case}
+				{default /}
+			{/switch}
+
+		</div>
+	</div>
+	<script>
+		var id = "{$order.id}";
+		var paydata = {};
+		{notempty name="address"}
+		var is_address = true;
+		var address_id = {$address.id};
+		{else}
+		var is_address = false;
+		var address_id = 0;
+		{/notempty}
+		var postUrl = "{:url('order_repayment')}";
+		var updateUrl = "{:url('order_update')}";
+		$(function(){
+			var click = false;
+			
+			$("#update").click(function(){
+				if(click){
+					return false;
+				}
+				click = true;
+				var loading = layer.open({type: 2,shadeClose:false});
+				$.post(updateUrl,{order_id:id}).done(function(res){
+					layer.close(loading);
+					if(res.errcode == 0){
+						layer.open({content: '更新成功',skin:'msg',time: 2,end:function(){window.location.reload();}});
+					}else{
+						alert(res.errmsg?res.errmsg:'更新失败');
+						click = false;
+					}
+				});
+			});
+			
+			$("#repay").click(function(){
+				if(click){
+					return ;
+				}
+				if(!is_address){
+					layer.open({content: '收货地址信息必须填写',skin:'msg',time: 2});
+					return false;
+				}
+				var loading = layer.open({type: 2,shadeClose:false});
+				$.post(postUrl,{order_id:id},function(res){
+					layer.close(loading);
+					if(res.errcode == 0){
+						// 创建订单成功 需要返回order_number
+						console.log(res);
+						paydata = res.paydata;
+						callPay();
+					}else{
+						alert(res.errmsg?res.errmsg:'创建订单失败');
+					}
+				},'json');
+			});
+			
+			function callPay(){
+				if (typeof WeixinJSBridge == "undefined"){
+				   	if( document.addEventListener ){
+				       	document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+				   	}else if (document.attachEvent){
+				       	document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+				       	document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+				   	}
+				}else{
+	            	onBridgeReady();
+	        	}
+			}
+			
+			function onBridgeReady(){
+				WeixinJSBridge.invoke('getBrandWCPayRequest',paydata,function(res){     
+				   	if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+					   $.post(paySuccessUrl,{result:res});
+					   // 直接跳转支付成功页面
+					   layer.open({content: '支付成功',skin:'msg',time: 2,end:function(){window.location.reload();}});
+		           	}else if(res.err_msg == "get_brand_wcpay_request:cancel"){
+		           	}else if(res.err_msg == "get_brand_wcpay_request:fail"){
+		        	   alert('支付失败!');
+		           	}else{
+		        	   alert(res.err_msg);
+		           	}   
+			   	}); 
+			}
+		});
+	</script>
+</body>
+
+</html>

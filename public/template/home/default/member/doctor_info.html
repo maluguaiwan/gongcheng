@@ -1,0 +1,197 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+{include file="common/share"}
+	<style type="text/css">
+		body {
+			background-color: #FFFFFF;
+		}
+		.ys_wenbenx {
+		    min-height: 120px;
+		    height: auto;
+		}
+		input[type="file"]{
+			font-size: 1em;
+		}
+	</style>
+	<body>
+		<div class="shangbu_qd">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">个人信息</div>
+			</div>
+
+		</div>
+		<form action="" method="post" id="form">
+			<input type="hidden" name="id" value="{$info.id}" />			
+			<div class="tuijian_fenlei2_qdx">
+				<div class="lianxiren">请认真填写以下信息</div>
+				<div class="ys_wenbenx">1、医生姓名</div>
+				<div class="ys_wenbenx">
+					<input type="text" name="name" class="ys_xiewenben" value="{$info.name|default=''}"/>
+				</div>
+				<div class="ys_wenbenx">2、执业地址（单位）地址</div>
+				<div class="ys_wenbenx">
+					<select name="city" class="liebiaokuangc">
+						<option value="大连" {eq name="info.city" value="大连"} selected="selected" {/eq}>大连</option>
+						<option value="河南" {eq name="info.city" value="河南"} selected="selected" {/eq}>河南</option>
+					</select>
+					<select name="area" class="liebiaokuangc">
+						<option value="沙河口区" {eq name="$info.area" value="沙河口区"} selected="selected" {/eq}>沙河口区</option>
+						<option value="甘井子区" {eq name="$info.area" value="甘井子区"} selected="selected" {/eq}>甘井子区</option>
+					</select>
+				</div>
+				<div class="ys_wenbenx">医生分类</div>
+				<div class="ys_wenbenx">
+					<select name="category_id" class="liebiaokuangc">
+						{foreach name='list_cat' item='vo'}
+						<option value="{$vo.id}" {eq name="info.category_id" value="$vo.id"} selected="selected" {/eq}>{$vo.cname|raw}</option>
+						{/foreach}
+					</select>
+				</div>
+				<div class="ys_wenbenx">咨询价格</div>
+				<div class="ys_wenbenx">
+					<input type="text" name="advisory_price" class="ys_xiewenben" value="{$info.advisory_price|default=''}"/>
+				</div>
+				<div class="ys_wenbenx">3、详细地址（省、市、县/区、乡镇/街道、门牌号）</div>
+				<div class="ys_wenbenx"><input type="text" name="address" class="ys_xiewenben" value="{$info.address|default=''}"/></div>
+				<div class="ys_wenbenx">4、诊所名称</div>
+				<div class="ys_wenbenx"><input type="text" name="clinic" class="ys_xiewenben" value="{$info.clinic|default=''}"/></div>
+				<div class="ys_wenbenx">5、联系方式（电话）</div>
+				<div class="ys_wenbenx"><input type="text" name="contact_mobile" class="ys_xiewenben" value="{$info.contact_mobile|default=''}"/></div>
+				<div class="ys_wenbenx">6、联系方式（微信）</div>
+				<div class="ys_wenbenx"><input type="text" name="contact_weixin" class="ys_xiewenben" value="{$info.contact_weixin|default=''}"/></div>
+				<div class="ys_wenbenx">7、擅长领域（主要治疗哪方面疾病）</div>
+				<div class="ys_wenbenx"><input type="text" name="description" class="ys_xiewenben" value="{$info.description|default=''}"/></div>
+				<div class="ys_wenbenx">8、特色疗法（治疗擅长疾病的方法）</div>
+				<div class="ys_wenbenx"><input type="text" name="tese" class="ys_xiewenben" value="{$info.tese|default=''}"/></div>
+				<div class="ys_wenbenx22">9、个人照片<br />
+					<span class="ys_wenbenx222">（正面、清晰支持 jpg, png, gif图片格式，容量＜5M）</span></div>
+					<!-- <div class="ys_wenbenx" id="upload"><img src="/static/home/img/shangchuan.jpg" width="100" height="100" /></div> -->
+					<div class="ys_wenbenx" id="upload"><input type="file" id="upload_faceimgurl" accept="image/*" /></div>
+					
+					<input type="hidden" name="faceimgurl" id="faceimgurl" value="{$info.faceimgurl|default=''}" />
+					<div class="ys_wenbenx faceimgurl" {empty name="$info.faceimgurl"} style="display: none;" {/empty}><img src="{$info.faceimgurl}" width="60%" style="margin: 0 auto;" /></div>
+				
+				<div class="ys_wenbenx22">10、个人简介<br /><span class="ys_wenbenx222">（姓名、性别、教育、荣誉、特色疗法、主治方向、工作经验）</span></div>
+				
+				<div class="ys_wenbenx"><input type="text" name="introduction" class="ys_xiewenben" value="{$info.introduction|default=''}"/></div>
+				
+				<div class="ys_wenbenx22">11、医疗执业许可证或营业执照或医师证三者任选其一<br><span class="ys_wenbenx222">（祖传无证可上传锦旗）支持 jpg, png, gif图片格式，＜5M）</span></div>
+				
+				<div class="ys_wenbenx">
+					<div class="ys_wenbenx"><input type="file" id="upload_medical_license" accept="image/*" /></div>
+					<!-- <img src="/static/home/img/shangchuan.jpg" width="100" height="100" /> -->
+				</div>
+				
+				<input type="hidden" name="medical_license" id="medical_license" value="{$info.medical_license|default=''}" />
+				
+				<div class="ys_wenbenx medical_license" {empty name="$info.medical_license"} style="display: none;" {/empty}><img src="{$info.medical_license}" width="60%" style="margin: 0 auto;" /></div>
+				
+				<div class="ys_wenbenx22">12、诊所门面照片<br><span class="ys_wenbenx222">(支持 jpg, png, gif图片格式，容量小于5M）</span></div>
+				<input type="hidden" name="clinic_photo" id="clinic_photo" value="{$info.clinic_photo|default=''}" />
+				
+					<div class="ys_wenbenx clinic_photo" {empty name="$info.clinic_photo"} style="display: none;" {/empty}><img src="{$info.clinic_photo}" width="60%" style="margin: 0 auto;" /></div>
+				
+				<div class="ys_wenbenx">
+					<input type="file" id="upload_clinic_photo" accept="image/*" />
+				</div>
+				<div class="ys_wenbenx22">填表过程出现问题请联系发表人员<br>提交成功之后请及时联系平台办理入住手续！</div>
+				<div class="baocun">
+					<div class="anniubaocun" id="anniubaocun">保存并使用</div>
+				</div>
+			</div>
+		</form>
+		</div>
+		<script>
+			var uploadUrl = "{:url('member_image_upload')}";
+			$(function(){
+				$("#anniubaocun").click(function(){
+					$("#form").submit();
+				});
+				
+				$("#upload_faceimgurl").change(function(){
+					var file = document.getElementById("upload_faceimgurl");
+					console.log(file.files);
+					if(!file){
+						return false;
+					}
+					var form = new FormData();
+					form.append("file",file.files[0]);
+					$.ajax({
+					      type: "post",
+					      url: uploadUrl,
+					      data: form,
+					      contentType: false, // 注意这里应设为false
+					      processData: false,    //false
+					      cache: false,    //缓存
+					      success: function(data){
+					      	if(data.code == 200){
+					      		$("#faceimgurl").val(data.url);
+					      		$(".faceimgurl img").attr('src',data.url);
+					      		$(".faceimgurl").show();
+					      	}else{
+					      		alert(data.msg);
+					      	}
+					      }
+					})
+				});
+				
+				$("#upload_medical_license").change(function(){
+					var file = document.getElementById("upload_medical_license");
+					console.log(file.files);
+					if(!file){
+						return false;
+					}
+					var form = new FormData();
+					form.append("file",file.files[0]);
+					$.ajax({
+					      type: "post",
+					      url: uploadUrl,
+					      data: form,
+					      contentType: false, // 注意这里应设为false
+					      processData: false,    //false
+					      cache: false,    //缓存
+					      success: function(data){
+					      	if(data.code == 200){
+					      		$("#medical_license").val(data.url);
+					      		$(".medical_license img").attr('src',data.url);
+					      		$(".medical_license").show();
+					      	}else{
+					      		alert(data.msg);
+					      	}
+					      }
+					})
+				});
+				
+				$("#upload_clinic_photo").change(function(){
+					var file = document.getElementById("upload_clinic_photo");
+					console.log(file.files);
+					if(!file){
+						return false;
+					}
+					var form = new FormData();
+					form.append("file",file.files[0]);
+					$.ajax({
+					      type: "post",
+					      url: uploadUrl,
+					      data: form,
+					      contentType: false, // 注意这里应设为false
+					      processData: false,    //false
+					      cache: false,    //缓存
+					      success: function(data){
+					      	if(data.code == 200){
+					      		$("#clinic_photo").val(data.url);
+					      		$(".clinic_photo img").attr('src',data.url);
+					      		$(".clinic_photo").show();
+					      	}else{
+					      		alert(data.msg);
+					      	}
+					      }
+					})
+				});
+			});
+		</script>
+	</body>
+</html>

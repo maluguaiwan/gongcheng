@@ -1,0 +1,101 @@
+{extend name="base" /}
+{block name="main"}
+<form class="layui-form" id="admin">
+    <input type="hidden" name="table" value="member_bank_water">
+    <input type="hidden" name="id_name" value="id">
+    <table class="layui-table" lay-even="" lay-skin="row" lay-size="sm">
+      <colgroup>
+        <col width="50">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="">
+        <col width="*">
+      </colgroup>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>用户信息</th>
+        <th>银行卡信息</th>
+        <th>余额信息</th>
+        <th>申请时间</th>
+        <th>打款时间</th>
+        <th>审核状态</th>
+      </tr>
+      </thead>
+      <tbody>
+      {foreach name="list" item="vo"}
+      <tr>
+        <td>{$vo.id}</td>
+        <td>
+          用户id：{$vo.member_id}<br />
+          用户姓名：{$vo.name}<br />
+          微信昵称：{$vo.nickname}<br />
+          手机号：{$vo.mobile}
+        </td>
+        <td>
+          银行卡号：{$vo.bank_number}<br />
+          开户银行：{$vo.bank_name}<br />
+          开户支行：{$vo.bank_branch_name}<br />
+          开户姓名：{$vo.bank_username}
+        </td>
+        <td>
+          原余额：{$vo.before_amount}元<br />
+          提现金额：{$vo.money}元<br />
+          现余额：{$vo.after_amount}元
+        </td>
+        <td>{$vo.create_time}</td>
+        <td>
+          {notempty name='vo.comlate_time'}
+          {$vo.comlate_time|date='Y-m-d H:i'}
+          {else}
+          未审核
+          {/notempty}
+        </td>
+        <td>
+          {notempty name='vo.comlate_time'}
+          审核通过
+          {else}
+          <a href="javascript:void(0);" url="{:url('agree')}" id="{$vo.id}" class="layui-btn layui-btn-sm agree">同意打款</a>
+          {/notempty}
+        </td>
+      </tr>
+      {/foreach}
+      </tbody>
+    </table>
+</form>
+<div style="margin-bottom:45px;margin-right:20px;float: right;">{$list->render()|default=''|raw}</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    layui.use('list',function () {
+        var layer = layui.layer,
+            form = layui.form,
+            $ = layui.jquery;
+
+      //同意打款
+      $('.agree').click(function(){
+          var obj=$(this);
+          var id = obj.attr('id');
+          var url = obj.attr('url');
+          layer.confirm('确定同意打款吗?', function(index) {
+              $.ajax({
+                  url:url,
+                  data:{id:id},
+                  success:function(res) {
+                      layer.msg(res.msg);
+                      if(res.code == 200) {
+                          setTimeout(function(){
+                              location.href = res.url;
+//                                obj.parent().parent().remove();
+                              //window.location.reload()
+                          },1500)
+                      }
+                  }
+              })
+          })
+      });
+    })
+</script>
+{/block}

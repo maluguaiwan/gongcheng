@@ -1,0 +1,153 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/layer/layer.js"></script>
+{include file="common/share"}
+<style type="text/css">
+	body {
+		background-color: #FFFFFF;
+	}
+	.layui-m-layercont{
+		font-size: 2.5em;
+	    padding: 2.5rem 5rem !important;
+	}
+</style>
+	<body>
+		<div class="shangbu_qd">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">绑定手机号码</div>
+			</div>
+
+		</div>
+		<div class="tuijian_fenlei2_qdx">
+			<input type="hidden" name="member_id" id="member_id" value="{$member.id}"/>
+			<div class="tuijianyao">
+				<div class="yinhang">绑定信息</div>
+				<div class="wenbenx">
+					<div class="wenbenx1">真实姓名</div>
+					<div class="wenbenx2"><input type="text" name="name" id="name" value="{$member.name}" class="xiewenben" /></div>
+				</div>
+				<div class="wenbenx">
+					<div class="wenbenx1">手机号</div>
+					<div class="wenbenx2"><input type="text" name="mobile" id="mobile" value="{$member.mobile}" class="xiewenben" /></div>
+				</div>
+				<div class="wenbenx">
+					<div class="wenbenx1">验证码</div>
+					<div class="wenbenx2">
+						<input type="text" name="verify" id="verify" class="xiewenben verify" />
+						<div class="send-sms-box">
+							<button class="send-btn" type="button" id="send-btn" style="font-size: 2.5rem;padding: 0.5rem;">发送验证码</button>
+						</div>
+					</div>
+				</div>
+				<div class="baocun">
+					<a href="javascript:;">
+						<div class="anniubaocun" id="subbtn">绑定手机号</div>
+					</a>
+				</div>
+			</div>
+		</div>
+		<script>
+			var postUrl="{:url('member_mobile_bind')}";
+			var memberIndexUrl = "{:url('member_index')}";
+			var sendSmsUrl = "{:url('send_sms_bind')}";
+			$(function(){
+				var countdown=60;
+				function settime(obj){
+					if (countdown == 0) {
+				        obj.prop("disabled",false);
+				        obj.text("发送验证码");
+				        countdown = 60;
+				        return;
+				    } else { 
+				        obj.prop("disabled",true);
+				        obj.text("重新发送(" + countdown + ")");
+				        countdown--; 
+				    }
+				    setTimeout(function() { 
+				    	settime(obj) 
+				    },1000)
+				}
+				$("#send-btn").click(function(){
+					var mobile = $.trim($("#mobile").val());
+					if(!mobile){
+						layer.open({content: '手机号不能为空',skin:'msg',time: 2});
+						return false;
+					}
+					if(mobile.length != 11) {
+						layer.open({content: '手机号格式不正确',skin:'msg',time: 2});
+					     return false;
+					}
+					 var myreg = /^1(3|5|8|7|4){1}\d{9}$/;
+					if(!myreg.test(mobile)){
+						layer.open({content: '手机号格式不正确',skin:'msg',time: 2});
+					    return false;
+					}
+					var self = $(this);
+					$.post(sendSmsUrl,{mobile:mobile}).done(function(res){
+						if(res.errcode == 0){
+							layer.open({content:'发送成功',skin:'msg',time: 2});
+							settime(self);
+						}else{
+							layer.open({content:res.errmsg?res.errmsg:'',skin:'msg',time: 2});
+						}
+					});
+				});
+				$("#subbtn").click(function(){
+					var name = $("#name").val();
+					var mobile = $.trim($("#mobile").val());
+					var verify = $("#verify").val();
+					if(!name){
+						layer.open({content: '真实姓名不能为空',skin:'msg',time: 2});
+						return false;
+					}
+					if(!mobile){
+						layer.open({content: '手机号不能为空',skin:'msg',time: 2});
+						return false;
+					}
+					if(mobile.length != 11) {
+						layer.open({content: '手机号格式不正确',skin:'msg',time: 2});
+					     return false;
+					}
+					 var myreg = /^1(3|5|8|7|4){1}\d{9}$/;
+					if(!myreg.test(mobile)){
+						layer.open({content: '手机号格式不正确',skin:'msg',time: 2});
+					    return false;
+					}
+					if(!verify){
+						layer.open({content: '验证码不能为空(暂时随便填写4位数字)',skin:'msg',time: 2});
+						return false;
+					}
+					if(verify.length != 4){
+						layer.open({content: '验证码位数不正确',skin:'msg',time: 2});
+						return false;
+					}
+					var loading = layer.open({type: 2,shadeClose:false});
+					var postData = {
+						name:name,
+						mobile:mobile,
+						verify:verify
+					};
+					$.post(postUrl,postData,function(res){
+						layer.close(loading);
+						if(res.errcode == 0){
+							layer.open({
+							    content: '绑定手机号成功'
+							    ,skin: 'msg'
+							    ,time: 2
+							    ,end:function(){
+							    	window.location.href = memberIndexUrl;
+							    }
+							});
+						}else{
+							alert(res.errmsg?res.errmsg:'绑定手机号失败');
+						}
+					},'json');
+				});
+			});
+		</script>
+	</body>
+
+</html>

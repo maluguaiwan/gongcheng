@@ -1,0 +1,47 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/js/jquery.qrcode.min.js"></script>
+<script src="/static/home/layer/layer.js"></script>
+{include file="common/share"}
+<style type="text/css">
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+.qrocde{
+	margin: 0 auto;
+}
+img{
+	max-width: 100%;
+}
+.title{
+	font-size: 2.5rem;
+}
+
+</style>
+<body>
+<!-- 
+<div align="center">
+	<img src="/static/home/img/yaoqing.jpg" /> 
+</div>
+-->
+<div align="center">
+	<p class="title">邀请会员</p>
+</div>
+<div align="center">
+	<div class="qrocde" id="qrcode"></div>
+</div>
+<script>
+	var url = "{$url|raw}";
+	$(function(){
+		$("#qrcode").qrcode({
+		  text:"http://"+url,
+		  width:400,
+		  height:400
+		});
+	});
+</script>
+</body>
+</html>

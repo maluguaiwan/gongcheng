@@ -1,0 +1,84 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/layer/layer.js"></script>
+{include file="common/share"}
+<style type="text/css">
+	.layui-m-layercont{
+		font-size: 2.5em;
+	    padding: 2.5rem 5rem !important;
+	}
+</style>
+<body>
+	<div class="shangbu_qd">
+		<div class="tou ">
+			<div class="tou_left">
+				<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+			</div>
+			<div class="tou_wenbenyu2">我要提现</div>
+		</div>
+
+	</div>
+	<div class="tuijian_fenlei2_qdx">
+
+		<div class="tuijianyao">
+			<div class="yinhang"><span class="ketixian">可提现额度</span> ¥ {$member.amount|default='0'}元 </div>
+			<div class="wenbenx">
+				<div class="wenbenx1">提现额度</div>
+				<div class="wenbenx2"><input type="text" name="amount" id="amount" class="xiewenben" /></div>
+			</div>
+
+			<div class="baocun">
+				<a href="javascript:;">
+					<div class="anniubaocun" id="subbtn">我要提现</div>
+				</a>
+			</div>
+			<div class="tixianbeizhu">备注：提现之前绑定银行卡
+				<a href="{:url('member_bank_bind')}">前去绑定>></a>
+			</div>
+			<div class="tixianbeizhu">
+				<br>
+				<a href="{:url('/member/memberBankWater')}">查看提现记录>></a>
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+	var postUrl = "{:url('member_withdraw')}";
+	var isBindBank = Number("{$isBindBank}");
+	var amount = parseFloat("{$member.amount}");
+	$(function(){
+		var click = false;
+		$("#subbtn").click(function(){
+			if(click){
+				return false;
+			}
+			if(!isBindBank){
+				layer.open({content: '没有绑定银行卡',skin:'msg',time: 2});
+				return false;
+			}
+			var new_amount = parseFloat($("#amount").val());
+			if(isNaN(new_amount)){
+				layer.open({content: '请填写大于0的数字',skin:'msg',time: 2});
+				return false;
+			}
+			new_amount = new_amount < 0 ? 0 : new_amount;
+			if( amount < new_amount){
+				layer.open({content: '提现金额不能大于可提现额度',skin:'msg',time: 2});
+				return false;
+			}
+			click = true;
+			var loading = layer.open({type: 2,shadeClose:false});
+			$.post(postUrl,{money:new_amount}).done(function(res){
+				layer.close(loading);
+				if(res.errcode == 0){
+					layer.open({content:'提现成功，后台审核中',skin:'msg',time: 2,end:function(){window.location.reload()}});
+				}else{
+					layer.open({content:res.errmsg?res.errmsg:'提现失败',skin:'msg',time: 2});
+					click = false;
+				}
+			});
+		});
+	});
+</script>
+
+</html>

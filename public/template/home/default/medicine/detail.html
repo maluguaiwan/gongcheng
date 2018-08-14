@@ -1,0 +1,162 @@
+{include file="common/header"}
+<link rel="stylesheet" type="text/css" href="/static/home/layui/css/layui.css"/>
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/layer/layer.js"></script>
+{include file="common/share"}
+<style>
+.layui-flow-more{
+	font-size: 1em;
+}
+.pingjia_k .pingjia_k2{
+	font-size: 0.8em;
+}
+</style>
+<body>
+<div class="shangbu">
+<div class="tou ">
+<div class="tou_left"><a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a></div>
+<div class="tou_wenbenyu2">{$category.name|default='药品'}</div>
+</div>
+<div class="biaoti">
+<a href="#shangpin"><div class="moren">商品</div></a>
+<a href="#xiangqing"><div class="xiaoliang">详情</div></a>
+<a href="#pingjia"><div class="jiage">评价</div></a>
+</div>
+</div>
+<div class="datu">
+<div class="huandeng">
+<link rel="stylesheet" href="/static/home/css/swiper.min.css">
+<div class="swiper-container">
+    <div class="swiper-wrapper">
+        {notempty name="$product.pics"}
+        	{volist name="$product.pics" id="pic"}
+	        <div class="swiper-slide">
+	        	<a href="javascript:void(0);"><img src="{$pic.url|default=''}" width="100%" height="566"></a>
+	        </div>
+	        {/volist}
+        {else}
+        <div class="swiper-slide">
+        	<a href="javascript:void(0);"><img src="{$product.image|default='/static/home/img/default_product.jpg'}" width="100%" height="566"></a>
+        </div>
+        {/notempty}
+    </div>
+    <div class="swiper-pagination"></div>							
+</div>
+<script src="/static/home/js/swiper.min.js"></script>
+    <script>
+    		var swiper = new Swiper('.swiper-container', {
+	        pagination: '.swiper-pagination',
+	        nextButton: '.swiper-button-next',
+	        prevButton: '.swiper-button-prev',
+	        paginationClickable: true,
+	        spaceBetween: 30,
+	        centeredSlides: true,
+	        autoplay: 2500,
+	        autoplayDisableOnInteraction: false
+	    });
+    </script>
+</div>
+
+<a name="shangpin" id="shangpin"></a></div>
+<div class="jianshu">
+<div class="jianshu1">{$product.title}</div>
+<div class="jianshu7"><div class="jianshu2">{$product.sub_title}</div><div class="jianshu8"><a href="javascript:void(0);" class="lianjie"></a></div>
+</div>
+
+<div class="jianshu3">{$product.description}</div>
+<div class="jianshu5"><div class="jianshu4">¥ {$product.price}</div><div class="jianshu6">月售{$product.sale_count}笔</div></div>
+
+</div>
+{if condition="$product.promotion_title"}
+<div class="cuxiao"><span class="hongse">促销</span> {$product.promotion_title}</div>
+{/if}
+<div class="shuomingshu">说明书<a name="xiangqing" id="xiangqing"></a></div>
+<div class="shuomingshu_nr">
+  {$product.content|raw}
+</div>
+<div class="pingjia">评价<a name="pingjia" id="pingjia"></a></div>
+<div class="shuomingshu_nr" id="data-content" style="padding-bottom: 20px;"></div>
+<div class="footer">
+	
+{eq name="is_doctor" value="0"}
+<div class="anniu"><a href="{:url('home_index')}"><img src="/static/home/img/an1.jpg" width="126" height="110" border="0" /></a></div>
+<div class="anniu"><a href="{:url('doctor_list')}"><img src="/static/home/img/an2.jpg" width="126" height="110" border="0" /></a></div>
+<div class="anniu"><a href="{:url('car_list')}"><img src="/static/home/img/an4.jpg" width="126" height="110" border="0" /></a></div>
+<a href="javascript:;" id="add-car"><div class="anniu_qd">加入清单</div></a>
+<a href="{:url('medicine_add_order',['id'=>$product['id']])}"><div class="anniu_lj">立即订购</div></a>
+{else}
+<div class="anniu"><a href="{:url('home_index')}"><img src="/static/home/img/an1.jpg" width="126" height="110" border="0" /></a></div>
+<div class="anniu"><a href="{:url('member_list')}" style="font-size: 2.5em;">我的患者</a></div>
+<div class="anniu"><a href="{:url('medicine_doctor_car_list')}"><img src="/static/home/img/an4.jpg" width="126" height="110" border="0" /></a></div>
+<a href="javascript:;" id="doctor-add-car"><div class="anniu_qd" style="width: 40%;">加入清单</div></a>
+{/eq}
+</div>
+<div class="tj_neirong2"></div>
+<script src="/static/home/layui/layui.js"></script>
+<script>
+var id = "{$product.id}";
+var urls = {
+	dataUrl:"{:url('medicine_data_assess',['product_id'=>$product['id']])}",
+	addCarUrl:"{:url('medicine_add_car')}",
+	doctorAddCarUrl:"{:url('medicine_doctor_add_car')}"
+};
+layui.use('flow', function(){
+	var flow = layui.flow;
+
+  	flow.load({
+	    elem: '#data-content' 
+	    ,done: function(page, next){ 
+	      var lis = [];
+	      $.get(urls.dataUrl,{page:page},function(res){
+	        layui.each(res.data, function(index, item){
+	        	var html = '<div class="pingjia_k"><div class="pingjia_k1"><div class="pingjia_tx"><img src="'+item.headerimgurl+'" width="68" height="68"/></div><div class="pingjia_nicheng">'+item.name+'</div><div class="pingjia_time">'+item.create_time+'</div></div><div class="pingjia_k2">'+item.content+'</div></div>';
+	          	lis.push(html);
+	        }); 
+	        
+	        next(lis.join(''), res.data && res.data.length == 5);    
+	      });
+	    }
+	    ,end:'没有更多评论'
+  	});
+});
+$(function(){
+	var click = false;
+	$("#add-car").click(function(){
+		if(click){
+			return false;
+		}
+		click = true;
+		var loading = layer.open({type: 2,shadeClose:false});
+		$.post(urls.addCarUrl,{id:id},function(res){
+			layer.close(loading);
+			if(res.errcode == 0){
+				layer.open({content: '加入清单成功',skin:'msg',time: 2});
+			}else{
+				layer.open({content: res.errmsg?res.errmsg:'加入清单失败',skin:'msg',time: 2});
+			}
+			click = false;
+		});
+	});
+	/**
+	 * 医生为患者开药
+	 */
+	$("#doctor-add-car").click(function(){
+		if(click){
+			return false;
+		}
+		click = true;
+		var loading = layer.open({type: 2,shadeClose:false});
+		$.post(urls.doctorAddCarUrl,{id:id},function(res){
+			layer.close(loading);
+			if(res.errcode == 0){
+				layer.open({content: '加入清单成功',skin:'msg',time: 2});
+			}else{
+				layer.open({content: res.errmsg?res.errmsg:'加入清单失败',skin:'msg',time: 2});
+			}
+			click = false;
+		});
+	});
+});
+</script>
+</body>
+</html>

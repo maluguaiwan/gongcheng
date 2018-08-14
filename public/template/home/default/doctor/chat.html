@@ -1,0 +1,375 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/layer/layer.js"></script>
+<script src="/static/common/js/vue.dev.js"></script>
+{include file="common/share"}
+<style>
+[v-cloak]{display: none}
+.pay-btn{
+	width: 100%;
+	font-size: 2em;
+	background: #f3ca61;
+	height: 133px;
+    margin-top: -12px;
+}
+#chat-room{
+	padding-bottom: 200px;
+}
+.anniu_jiahao{
+    position: relative;
+}
+#file{
+    position: absolute;
+    width: 100%;
+    left: 0px;
+    top: 0px;
+    height: 100px;
+    z-index: 999;
+    opacity: 0;
+}
+.ltneirong img{
+	width: 50%;
+	margin-left: 100px;
+}
+.ltneirong2 img{
+	width: 50%;
+    margin-right: 100px;
+}
+</style>
+	<body>
+		<div class="shangbu">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">在线医生</div>
+			</div>
+		</div>
+		<div class="tuijian_fenlei2x">
+			<div class="tuijianyao">
+				<div class="tuijianyao_left">
+					<a href="javascript:void(0);"><img src="{$doctor.faceimgurl|default='/static/home/img/yishengtupian.jpg'}" width="388" height="244" border="0" /></a>
+				</div>
+				<div class="tuijianyao_right">
+					<div class="right_1">{$doctor.name}</div>
+					<div class="right_2x">{$doctor.description}</div>
+					<div class="right_2x">解答：{$doctor.answer_count}次&nbsp;&nbsp;&nbsp;&nbsp;好评：{$doctor.praise}% </div>
+					<div class="right_3x">价格：{$doctor.advisory_price}元/次 </div>
+					<div class="right_4">
+						{eq name="is_collected" value="0"}
+						<div class="shoucang" id="collect-btn"><img src="/static/home/img/shoucang.jpg" width="131" height="56" /></div>
+						{else}
+						<div class="shoucang collected" style="color: #333;padding-top: 6px;">已收藏</div>
+						{/eq}
+						
+						<div class="pinglun">
+							<a href="{:url('doctor_comment',['doctor_id'=>$doctor['id']])}"><img src="/static/home/img/pinglun.jpg" width="131" height="56" border="0" /></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="chat-room" v-cloak>
+			<div class="shaodeng" v-text="showMessage"></div>
+			<div class="message-box" id="message-box">
+				<template v-for="message in messages">
+					<div class="liaotian clear">
+						<div class="clear" :class="message.self?'zxneirong3':'zxneirong2'">
+							<div  :class="message.self?'txiang2':'txiang'"><img :src="message.self?mhead:dhead" class="imgtu2" /></div>
+							<div  :class="message.self?'ltneirong2':'ltneirong'" v-html="message.message"></div>
+						</div>
+					</div>
+				</template>
+			</div>
+
+			<div class="footer" v-if="is_client">
+				<div class="anniu_jiahao">
+					<img src="/static/home/img/jiahao.jpg" width="115" height="100" border="0" />
+					<input type="file" id="file" class="upbtn" @change="uploadImage"  accept="image/*"/>
+				</div>
+				<div class="wenbenxia">
+					<input v-model="message_content" type="text" class="tou_wenbenkuang2" :disabled="!isInit" />
+				</div>
+				<div class="anniu_fs">
+					<a href="javascript:;" @click="send"><img src="/static/home/img/fasong.jpg" width="164" height="110" border="0" /></a>
+				</div>
+			</div>
+			<div class="footer" v-else>
+				<button type="button" class="pay-btn" @click="pay">支付{$doctor.advisory_price}元立即咨询</button>
+			</div>
+		</div>
+	</body>
+<script>
+	var urls = {
+		getDataUrl:"{:url('doctor_chat_data',['doctor_id'=>$doctor['id']])}",
+		historyUrl:"{:url('chat_history')}",
+		collectUrl:"{:url('doctor_collect',['doctor_id'=>$doctor['id']])}",
+		payUrl:"{:url('chat_pay',['doctor_id'=>$doctor['id']])}",
+		paySuccessUrl:"{:url('chat_pay_success',['doctor_id'=>$doctor['id']])}",
+		uploadUrl:"{:url('chat_upload')}"
+	};
+	$(function(){
+		$("#collect-btn").click(function(){
+			$.getJSON(urls.collectUrl).done(function(res){
+				if(res.errcode == 0){
+					alert('收藏成功');
+					window.location.reload();
+				}else{
+					alert(res.errmsg?res.errmsg:'');
+				}
+			});
+		});
+	});
+</script>
+<script>
+	var vm = new Vue({
+		el:'#chat-room',
+		data:{
+			isInit:false,
+			message_content:'',
+			member:null,
+			doctor:null,
+			ws:null,
+			messages:[],
+			rightShow:false,
+			is_online:false,
+			is_client:false,
+			paydata:{}
+		},
+		computed:{
+			showMessage:function(){
+				if(!this.isInit){
+					return "您正在接通医生请稍等...";
+				}
+				if(!this.is_online){
+					return "对方已离线";
+				}
+				return "对方在线";
+			},
+			mhead:function(){
+				return this.member.headimgurl?this.member.headimgurl:'/static/home/img/touxiang.jpg';
+			},
+			dhead:function(){
+				return this.doctor.faceimgurl?this.doctor.faceimgurl:'/static/home/img/tx_ys.jpg';
+			}
+		},
+		created:function(){
+			this.getDataInfo();
+		},
+		methods:{
+			getDataInfo:function(){
+				var self = this;
+				$.getJSON(urls.getDataUrl,function(res){
+					if(res.errcode == 0){
+						self.member = res.member;
+						self.doctor = res.doctor;
+						self.connect();
+					}
+				});
+			},
+			collect:function(){
+				if(this.doctor.is_collected){
+					return false;
+				}
+				$.getJSON(urls.collectUrl).done(function(res){
+					if(res.errcode == 0){
+						alert('收藏成功');
+					}else{
+						
+					}
+				});
+			},
+			uploadImage:function(event){
+				var files=event.target.files;
+				if(files.length!=1){
+                  	return false;
+				}
+				var file=files[0];
+				var fdata = new FormData();
+				fdata.append('file', file);
+				var self = this;
+				var loading = layer.open({type: 2,shadeClose:false});
+				
+				var xhr = new XMLHttpRequest();
+				xhr.open('post', urls.uploadUrl , true); // 上传地址
+				xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState == 4) {
+						if (xhr.status == 200) {
+							layer.close(loading);
+							var str = $.parseJSON(xhr.responseText); // 返回格式，此处为json，可以为别的格式
+							if(str.code == 200){  // 返回值的逻辑可忽略
+								var senddata = {
+									type:'message',
+									data:{
+										self_id:self.member.id,
+										to_uid:self.doctor.id,
+										content:"<img src='"+str.url+"' />"
+									}
+								}
+								self.ws.send(JSON.stringify(senddata));
+								var newMessage = {self:1,message:"<img src='"+str.url+"' />"};
+								self.messages.push(newMessage);
+								self.message_content = '';
+							}else{
+								alert('上传失败');
+							}
+						}
+					}
+				}
+				xhr.send(fdata);
+		        return true;
+			},
+			send:function(){
+				if(!this.message_content){
+					layer.msg("请填写发送的内容");
+					return false;
+				}
+				if(this.doctor){
+					var senddata = {
+						type:'message',
+						data:{
+							self_id:this.member.id,
+							to_uid:this.doctor.id,
+							content:this.message_content
+						}
+					}
+					this.ws.send(JSON.stringify(senddata));
+					var newMessage = {self:1,message:this.message_content};
+					this.messages.push(newMessage);
+					this.message_content = '';
+				}
+			},
+			
+			connect:function(){
+				// 创建websocket
+				var self = this;
+				if(!this.ws){
+					var ws = new WebSocket("ws://"+document.domain+":8282");
+			       	ws.onopen = this.onopen;
+			       	// 当有消息时根据消息类型显示不同信息
+			       	ws.onmessage = this.onmessage; 
+			       	ws.onclose = function() {
+			          	console.log("连接关闭，定时重连");
+			          	self.connect();
+			       	};
+			       	ws.onerror = function() {
+			           	console.log("出现错误");
+			       	};
+			       	this.ws = ws;
+				}
+			},
+			onopen:function(){
+				console.log('onopen');
+				var senddata = {
+					type:'init',
+					to_type:'doctor',
+					member_id:this.member.id,
+					doctor_id:this.doctor.id
+				};
+				this.ws.send(JSON.stringify(senddata));
+			},
+			onmessage:function(e){
+				// 所有的业务逻辑
+				var self = this;
+				var data = JSON.parse(e.data);
+				console.log(data);
+				switch(data.message_type){
+					case 'init':
+						// 返回是否可以发送消息 和 医生是否在线is_online,is_client
+						if(data.status == 'error'){
+							alert("身份认证失败");
+							return false;
+						}
+						self.is_online = data.is_online;
+						self.is_client = data.is_client;
+						self.isInit = true;
+						self.ws.send(JSON.stringify({type:'history',uid:self.member.id,to_uid:self.doctor.id}));
+						break;
+					case 'update':
+						self.is_online = data.is_online;
+						self.is_client = data.is_client;
+						break;
+					case 'toupdate':
+						self.ws.send(JSON.stringify({type:'update',to_type:'doctor',uid:self.member.id,to_uid:self.doctor.id}));
+						break;
+					case 'message':
+						var messagedata = data.data;
+						console.log(messagedata);
+						var newMessage = {
+							self:0,
+							message:messagedata.content
+						};
+						self.messages.push(newMessage);
+						break;
+					case 'history':
+						self.messages = data.data;
+						self.scroll();
+						break;
+				}
+			},
+			showNewMessage:function(){
+				console.log(this.$refs);
+				var height= this.$refs.chatbox.getBoundingClientRect().height;
+            	$(".chat-box").scrollTop(height); 
+			},
+			/* 支付 */
+			pay:function(){
+				var self = this;
+				var loading = layer.open({type: 2,shadeClose:false});
+				$.getJSON(urls.payUrl,function(res){
+					layer.close(loading);
+					if(res.errcode == 0){
+						// 创建订单成功 需要返回order_number
+						console.log(res);
+						self.paydata = res.paydata;
+						self.callpay();
+					}else{
+						layer.open({
+						    content: res.errmsg?res.errmsg:'创建订单失败'
+						    ,btn: '我知道了'
+						});
+					}
+				},'json');
+			},
+			callpay:function(){
+				var self=this;
+				if (typeof WeixinJSBridge == "undefined"){
+				   	if( document.addEventListener ){
+				       	document.addEventListener('WeixinJSBridgeReady', self.onBridgeReady, false);
+				   	}else if (document.attachEvent){
+				       	document.attachEvent('WeixinJSBridgeReady', self.onBridgeReady); 
+				       	document.attachEvent('onWeixinJSBridgeReady', self.onBridgeReady);
+				   	}
+				}else{
+	            	self.onBridgeReady();
+	        	}
+			},
+			onBridgeReady:function(){
+				var self = this;
+				WeixinJSBridge.invoke('getBrandWCPayRequest',this.paydata,function(res){     
+				   	if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+					   // orderQuery();
+					   self.is_client = 1;
+					   $.post(urls.paySuccessUrl,{result:res});
+					   // 直接跳转支付成功页面
+					   layer.open({content: '支付成功',skin:'msg',time: 2,end:function(){window.location.href = success_url;}});
+		           	}else if(res.err_msg == "get_brand_wcpay_request:cancel"){
+		           	}else if(res.err_msg == "get_brand_wcpay_request:fail"){
+		        	   alert('支付失败!');
+		           	}else{
+		        	   alert(res.err_msg);
+		           	}   
+			   	}); 
+			},
+			scroll:function(){
+				this.$nextTick(function(){
+					var h = $("#message-box").height();
+					$(window).scrollTop(h);
+				});
+			}
+		}
+	});
+	
+</script>
+</html>

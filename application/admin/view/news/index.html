@@ -1,0 +1,94 @@
+{extend name="base" /}
+{block name="main"}
+<!--头部搜索开始-->
+<div class="container-fluid larry-wrapper">
+  <div class="row">
+    <div class="col-xs-4 col-sm-4 col-md-4">
+      <section class="panel panel-padding" style="margin-bottom: 0px">
+        <form class="layui-form" action="{:url('')}">
+          <div class="layui-form">
+            <div class="layui-inline">
+              <div class="layui-input-inline">
+                <input class="layui-input" name="keyword" value="{$pageMaps.keyword|default=''}" placeholder="文章标题">
+              </div>
+            </div>
+
+            <div class="layui-input-inline">
+              <select name="cat_id">
+                <option value="">文章分类</option>
+                {foreach name='cat_list' item='vo'}
+                <option {eq name="pageMaps.cat_id" value="{$vo.id}"}selected{/eq} value="{$vo.id}">{$vo.name}</option>
+                {/foreach}
+              </select>
+            </div>
+
+            <div class="layui-inline">
+              <button lay-submit class="layui-btn" lay-filter="search">查找</button>
+            </div>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+</div>
+<!--头部搜索结束-->
+<br/>
+<div class="layui-btn-group">
+  <a data-href="" field="is_visible" field_value="1" class="layui-btn layui-btn-primary layui-btn-sm enable" href="javascript:void(0);"><i class="layui-icon" style="color: #ffffff;">&#xe652;</i>启用</a>
+  <a data-href="" field="is_visible" field_value="0" class="layui-btn layui-btn-primary layui-btn-sm enable" href="javascript:void(0);"><i class="layui-icon" style="color: #ffffff;">&#xe651;</i>禁用</a>
+  <a data-href="" class="layui-btn layui-btn-primary layui-btn-sm delete_all_hard" href="javascript:void(0);"><i class="layui-icon" style="color: #ffffff;">&#xe640;</i>删除</a>
+</div>
+<form class="layui-form" id="admin">
+    <input type="hidden" name="table" value="news">
+    <input type="hidden" name="id_name" value="id">
+    <table class="layui-table" lay-even="" lay-skin="row" lay-size="sm">
+      <colgroup>
+        <col width="50">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="80px">
+        <col width="80px">
+        <col width="200px">
+        <col width="180px">
+      </colgroup>
+      <thead>
+      <tr>
+        <th>选择</th>
+        <th>ID</th>
+        <th>文章标题</th>
+        <th>分类名称</th>
+        <th>排序</th>
+        <th>是否显示</th>
+        <th>添加时间</th>
+        <th>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      {foreach name="list" item="vo"}
+      <tr>
+        <td><input type="checkbox" name="id[]" class="checkbox" value="{$vo.id}"></td>
+        <td>{$vo.id}</td>
+        <td>{$vo.title}</td>
+        <td>{$vo.name}</td>
+        <td>
+          <input table="news" id_name="id" id_value="{$vo.id}" field="sort" type="text" value="{$vo.sort}" placeholder="序号" class="layui-input list_text">
+        </td>
+        <td><input table="news" id_name="id" id_value="{$vo.id}" field="is_visible" type="checkbox" lay-skin="switch" lay-filter="switchStatus" lay-text="开启|关闭" {notempty name="$vo.is_visible"}{eq name="$vo.is_visible" value="1"}checked=""{/eq}{/notempty}></td>
+        <td>{$vo.create_time}</td>
+        <td>
+          <a href="{:url('edit',['id'=>$vo.id])}" data-tip-text="修改" data-tip-type="1" class="layui-btn and-bg-{$skin_name|default='default'} layui-btn-xs tooltip"><i class="layui-icon"></i></a>
+          <a id="{$vo.id}" url="{:url('del')}" data-tip-text="删除" data-tip-type="1" href="javascript:;" class="layui-btn and-bg-{$skin_name|default='default'} layui-btn-xs delete tooltip"><i class="layui-icon"></i></a>
+        </td>
+      </tr>
+      {/foreach}
+      </tbody>
+    </table>
+</form>
+<div style="margin-bottom:45px;margin-right:20px;float: right;">{$list->render()|default=''|raw}</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    layui.use('list')
+</script>
+{/block}

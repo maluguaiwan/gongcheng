@@ -1,0 +1,50 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/layer/layer.js"></script>
+{include file="common/share"}
+	<body>
+		<div class="shangbu">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">医生评论</div>
+			</div>
+		</div>
+		<div class="tuijian_fenlei2x">
+			<div class="tuijianyao">
+				<div class="tuijianyao_left">
+					<a href="javascript:void(0);"><img src="{$doctor.faceimgurl|default='/static/home/img/yishengtupian.jpg'}" width="388" height="244" border="0" /></a>
+				</div>
+				<div class="tuijianyao_right">
+					<div class="right_1">{$doctor.name}</div>
+					<div class="right_2x">{$doctor.description}</div>
+					<div class="right_2x">解答：{$doctor.answer_count}次&nbsp;&nbsp;&nbsp;&nbsp;好评：{$doctor.praise}% </div>
+					<div class="right_3x">价格：{$doctor.advisory_price}元/次 </div>
+					<div class="right_4">
+						<div class="shoucang"><img src="/static/home/img/shoucang.jpg" width="131" height="56" /></div>
+						<div class="pinglun"><a href="{:url('doctor_comment',['doctor_id'=>$doctor['id']])}"><img src="/static/home/img/pinglun.jpg" width="131" height="56" /></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="shuomingshu_nr">
+				{notempty name="comments"}
+				{volist name="comments" id="data"}
+				<div class="pingjia_k">
+					<div class="pingjia_k1">
+						<div class="pingjia_tx"><img src="{$data.member_img|default='/static/home/img/tx_ys.jpg'}" width="77" height="68" /></div>
+						<div class="pingjia_nicheng">{$data.member_name}</div>
+						<div class="pingjia_time">{$data.create_time}</div>
+					</div>
+					<div class="pingjia_k2">{$data.note}</div>
+				</div>
+				{/volist}
+				{else}
+					<div class="pingjia_k" style="text-align: center;">
+						<p>暂无评论</p>
+					</div>
+				{/notempty}
+			</div>
+	</body>
+	
+</html>

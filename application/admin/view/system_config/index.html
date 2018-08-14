@@ -1,0 +1,162 @@
+{extend name="base" /}
+{block name="main"}
+<div class="layui-btn-group" {empty name="$show"} style="display: none;" {else /} style="display: block;"{/empty}>
+    <a href="{:url('admin/system_config/add')}" class="layui-btn layui-btn-primary"><i class="layui-icon" style="color: #ffffff;">&#xe608;</i>添加配置项</a>
+</div>
+<div class="layui-form">
+  <table class="layui-table" lay-even="" lay-skin="row" lay-size="sm">
+    <colgroup>
+      <col width="20">
+      <col width="50">
+      <col width="80">
+      <col width="80">
+      <col width="50">
+      <col width="350">
+      <col width="150">
+      <col width="150">
+    </colgroup>
+    <thead>
+    <tr>
+      <th>排序</th>
+      <th>分组名称</th>
+      <th>标题</th>
+      <th>配置项类型</th>
+      <th>变量字段</th>
+      <th>数据值</th>
+      <th>额外参数</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <form id="config_form">
+      <input type="hidden" name="system_action" value="{:request()->action();}">
+      {php}$textA=0;$textB=0;{/php}
+    {volist name="config_list" id="vo"}
+    <tr>
+      <td><input type="text" name="orders[]" value="{$vo.orders}" style="width: 20px;" class="orders"><input type="hidden" name="id[]" value="{$vo.id}"></td>
+      <td>{$vo.group}</td>
+      <td>{$vo.title}</td>
+      <td>{$vo.type}</td>
+      <td>{$vo.vari}</td>
+        {php}$value=json_decode($vo['options'], true);{/php}
+        <td>
+        {if $vo.type=='checker'}
+         <input  table="system_config" id_name="id" id_value="{$vo.id}" field="value" type="checkbox" name="{$vo.vari}"  lay-skin="switch" lay-text="ON|OFF" lay-filter="switchStatus" value="{$vo.id}" {notempty name="$vo.value"}<?php if($vo['value'] ==1){ echo "checked=''";}?>{/notempty}>
+         {elseif $vo.type=='radio'}
+         {foreach $value as $key=>$key_value }
+        <input table="system_config" id_name="id" id_value="{$vo.id}" field="value" type="radio" name="{$vo.vari}" lay-skin="switch" title="{$key_value}" lay-filter="radioStatus" value="{$key}" {notempty name="$vo.value"}{eq name="$vo.value" value="$key"}checked=""{/eq}{/notempty}>
+         {/foreach}
+
+          {elseif $vo.type=='checkbox'}
+          {php}$box=explode(',',$vo['value']);{/php}
+         {foreach $value as $key=>$key_value }
+         <input table="system_config" id_name="id" id_value="{$vo.id}" field="value" type="checkbox" name="{$vo.vari}" title="{$key_value}" lay-filter="checkboxStatus" value="{$key}" {notempty name="$vo.value"}<?php if(in_array($key,$box)){ echo "checked=''";} ?> {/notempty}>
+        {/foreach}
+        {elseif $vo.type=='textarea'}
+        {php}$textA =$textA+1;{/php}
+      <input table="system_config" id_name="id" id_value="{$vo.id}" field="value" value="{$vo.value}" placeholder="{$vo.value}" class="layui-input layui-textarea textareaValue{$textA} list_text" type="textarea">
+      {else}
+      {php}$textB =$textB+1;{/php}
+       <input table="system_config" id_name="id" id_value="{$vo.id}" field="value" value="{$vo.value}" placeholder="{$vo.value}" class="layui-input textValue{$textB} list_text" type="text">
+      {/if}
+       </td>
+
+      <td>{$vo.options}</td>
+      <td class="operation-menu">
+        <a href="{:url('admin/system_config/edit',['id'=>$vo.id])}" data-tip-text="修改" data-tip-type="1" class="layui-btn and-bg-{$skin_name|default='default'} layui-btn-xs tooltip"><i class="layui-icon"></i></a>
+        <a href="javascript:;" data-tip-text="删除" data-tip-type="1" class="layui-btn and-bg-{$skin_name|default='default'} layui-btn-xs delete tooltip" id="{$vo.id}"><i class="layui-icon"></i></a>
+      </td>
+    </tr>
+    {/volist}
+     </form>
+    </tbody>
+  </table>
+  </div>
+
+
+  <div class="layui-btn-group">
+    <button class="layui-btn layui-btn-sm and-bg-{$skin_name}" lay-submit lay-filter="config_orders">更新排序</button>
+    {$config_list->render()|raw}
+  </div>
+
+{/block}
+
+{block name="script"}
+<script type="text/javascript">
+  $('.delete').click(function(){
+      var obj = $(this);
+    var id = obj.attr('id');
+    layer.confirm('确定要删除?', function(index) {
+      $.ajax({
+        url:"{:url('admin/system_config/delete')}",
+        data:{id:id},
+        success:function(res) {
+          layer.msg(res.msg);
+          if(res.code == 1) {
+            setTimeout(function(){
+                obj.parent().parent().remove();
+                //location.href = res.url;
+            },500)
+          }
+        }
+      })
+    })
+  })
+</script>
+<script type="text/javascript">
+    layui.use('list')
+
+  /*var textValue;
+  var textareaValue;
+
+  <?php for($i=0;$i<21;$i++){echo '
+    $(document).ready(function(){
+      $(".textValue'.$i.'").focus(function(){
+        textValue = $(this).val();
+      });
+    });
+  $(document).ready(function(){
+  $(".textValue'.$i.'").blur(function(){
+    if( textValue != $(this).val()){
+      $.get("'.url('admin/system_config/update_value').'?id="+$(this).attr("id")+"&value="+$(this).val()+"&type=text",function(data,status){
+        if(data.code == 200){
+          layer.close(loading);
+          layer.msg(data.msg, {icon: 1, time: 1000}, function(){
+            //  location.reload();
+          });
+        }else {
+          layer.close(loading);
+          layer.msg(data.msg, {icon: 2, anim: 6, time: 1000});
+        }
+      });
+    }
+  });
+  });';
+    }?>
+
+  <?php for($i=0;$i<21;$i++){echo '
+    $(document).ready(function(){
+      $(".textareaValue'.$i.'").focus(function(){
+        textareaValue = $(this).val();
+      });
+    });
+    $(document).ready(function(){
+      $(".textareaValue'.$i.'").blur(function(){
+        if( textareaValue != $(this).val()){
+          $.get("'.url('admin/system_config/update_value').'?id="+$(this).attr("id")+"&value="+$(this).val()+"&type=textarea",function(data,status){
+            if(data.code == 200){
+              layer.close(loading);
+              layer.msg(data.msg, {icon: 1, time: 1000}, function(){
+                //  location.reload();
+              });
+            }else {
+              layer.close(loading);
+              layer.msg(data.msg, {icon: 2, anim: 6, time: 1000});
+            }
+          });
+        }
+      });
+    });';
+  }?>*/
+</script>
+{/block}

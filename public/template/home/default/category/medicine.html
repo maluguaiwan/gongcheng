@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<meta name="format-detection" content="telephone=no" />
+		<meta charset="utf-8">
+		<title>{$title|default="药到家"}</title>
+		<link rel="stylesheet" type="text/css" href="/static/home/css/font-awesome.4.6.0.css">
+		<link rel="stylesheet" href="/static/home/css/swiper-3.2.5.min.css" />
+		<link rel="stylesheet" href="/static/home/css/ectouch.css" />
+		<link rel="stylesheet" href="/static/home/css/search.css" />
+	</head>
+	<body style="max-width:640px;font-size: 14px;">
+		<div id="loading"><img src="/static/home/img/loading.gif" /></div>
+		<div class="con">
+			<div class="category-top">
+				<header>
+					<section class="search">
+						<div class="text-all dis-box j-text-all">
+							<div class="box-flex input-text">
+								<a class="a-search-input j-search-input" href="javascript:void(0)"></a>
+								<input type="text" placeholder="药品搜索" />
+								<i class="iconfont icon-guanbi is-null j-is-null"></i> </div>
+						</div>
+					</section>
+				</header>
+			</div>
+			<aside>
+				<div class="menu-left scrollbar-none" id="sidebar">
+					<ul>
+						{foreach name="category" id="c" key="key"}
+						{eq name="key" value="0"}
+						<li class="active">{$c.name}</li>
+						{else}
+						<li>{$c.name}</li>
+						{/eq}
+						{/foreach}
+					</ul>
+				</div>
+			</aside>
+			{foreach name="category" id="c" key="key"}
+			{eq name="key" value="0"}
+			<section class="menu-right padding-all j-content">
+			{else}
+			<section class="menu-right padding-all j-content" style="display:none">
+			{/eq}
+				<h5>{$c.name}</h5>
+				<ul>
+					{foreach name="$c.sub" id="sub"}
+					<li class="w-3">
+						<a href="{:url('medicine_list',['id'=>$sub['id']])}"></a> <img src="{$sub.imgurl|default='/static/home/img/category_default.png'}" width="65" height="" /><span>{$sub.name}</span></li>
+					{/foreach}
+				</ul>
+			</section>
+			{/foreach}
+		</div>
+		<div class="search-div j-search-div ts-3">
+			<section class="search">
+				<form action="/medicine/list" method="get">
+					<div class="text-all dis-box j-text-all">
+						<div class="box-flex input-texts">
+							<input class="j-input-text" type="text" name="search" placeholder="请输入搜索关键词" />
+							<i class="iconfont icon-guanbi is-null j-is-null"></i> </div>
+						<button type="submit" class="btn-submit">搜索</button>
+					</div>
+				</form>
+			</section>
+			<section class="search-con">
+				<div class="swiper-scroll history-search">
+					<div class="swiper-wrapper">
+						<div class="swiper-slide">
+							<p>
+								<label class="fl">热门搜索</label>
+							</p>
+							<ul class="hot-search a-text-more">
+								{foreach name='sk_list' item='vo'}
+								<li class="w-3">
+									<a href="{:url('/medicine/list',array('search'=>$vo.name))}"><span>{$vo.name}</span></a>
+								</li>
+								{/foreach}
+							</ul>
+							<p class="hos-search">
+								<label class="fl">最近搜索</label>
+								<span class="fr" onClick="javascript:clearHistroy();"><i class="fr"></i></span>
+							</p>
+							<ul class="hot-search a-text-more">
+								{foreach name='sl_list' item='vo'}
+								<li class="w-3">
+									<a href="{:url('/medicine/list',array('search'=>$vo.name))}"><span>{$vo.name}</span></a>
+								</li>
+								{/foreach}
+							</ul>
+						</div>
+					</div>
+					<div class="swiper-scrollbar"></div>
+				</div>
+			</section>
+			<footer class="close-search j-close-search"> 点击关闭</footer>
+		</div>
+
+		<script type="text/javascript">
+			//����cookie
+			function setCookie(cname, cvalue, exdays) {
+				var d = new Date();
+				d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+				var expires = "expires=" + d.toUTCString();
+				document.cookie = cname + "=" + cvalue + "; " + expires;
+			}
+
+			function clearHistroy() {
+				setCookie('ECS[keywords]', '', -1);
+				document.getElementById("search_histroy").style.visibility = "hidden";
+			}
+		</script>
+		<script src="/static/home/js/jquery-1.10.2.js"></script>
+		<script type="text/javascript" src="/static/home/js/swiper-3.2.5.min.js"></script>
+		<script type="text/javascript" src="/static/home/js/ectouch.js"></script>
+		<script type="text/javascript" src="/static/home/js/jquery.json.js"></script>
+		<script type="text/javascript" src="/static/home/js/common.js"></script>
+		<script type="text/javascript">
+			$(function($) {
+				$('#sidebar ul li').click(function() {
+					$(this).addClass('active').siblings('li').removeClass('active');
+					var index = $(this).index();
+					$('.j-content').eq(index).show().siblings('.j-content').hide();
+				})
+			})
+		</script>
+		<div style="text-align:center;margin:50px 0; font:normal 14px/24px 'MicroSoft YaHei';"></div>
+		{include file="common/share"}
+	</body>
+</html>

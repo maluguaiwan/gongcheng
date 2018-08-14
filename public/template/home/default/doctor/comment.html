@@ -1,0 +1,78 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/layer/layer.js"></script>
+{include file="common/share"}
+	<body>
+		<div class="shangbu">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">医生评论</div>
+			</div>
+		</div>
+		<div class="tuijian_fenlei2x">
+			<div class="tuijianyao">
+				<div class="tuijianyao_left">
+					<a href="javascript:void(0);"><img src="{$doctor.faceimgurl|default='/static/home/img/yishengtupian.jpg'}" width="388" height="244" border="0" /></a>
+				</div>
+				<div class="tuijianyao_right">
+					<div class="right_1">{$doctor.name}</div>
+					<div class="right_2x">{$doctor.description}</div>
+					<div class="right_2x">解答：{$doctor.answer_count}次&nbsp;&nbsp;&nbsp;&nbsp;好评：{$doctor.praise}% </div>
+					<div class="right_3x">价格：{$doctor.advisory_price}元/次 </div>
+					<div class="right_4">
+						{eq name="is_collected" value="0"}
+						<div class="shoucang" id="collect-btn"><img src="/static/home/img/shoucang.jpg" width="131" height="56" /></div>
+						{else}
+						<div class="shoucang collected" style="color: #333;padding-top: 6px;">已收藏</div>
+						{/eq}
+						
+						<a href="{:url('doctor_comment',['doctor_id'=>$doctor['id']])}"><div class="pinglun"><img src="/static/home/img/pinglun.jpg" width="131" height="56" /></div></a>
+					</div>
+				</div>
+			</div>
+			<form id="form" action="{:url('commentPost')}" method="post">
+				<input type="hidden" name="doctor_id" value="{$doctor.id}" />
+				<input type="hidden" name="member_id" value="{$member.id}" />
+				<div class="pl">
+					<input type="radio" name="score" value="1" class="daquan" /> 好评&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+					<input type="radio" name="score" value="3" class="daquan" /> 一般&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+					<input type="radio" name="score" value="5" class="daquan" /> 差评
+				</div>
+				<div class="wenbenxx">
+					<div class="wenbenx1">评论内容</div>
+					<div class="wenbenx2"><input type="text" name="note" class="xiewenbenx" /></div>
+				</div>
+			</form>
+			<div class="baocun">
+				<a href="javascript:;">
+					<div class="anniubaocun" id="subbtn">提交评论</div>
+				</a>
+			</div>
+		</div>
+	</body>
+	<script>
+		var click = false;
+		$(function(){
+			$("#subbtn").click(function(){
+				if(click){
+					return false;
+				}
+				click = true;
+				$("#form").submit();
+			});
+			
+			$("#collect-btn").click(function(){
+				$.getJSON(urls.collectUrl).done(function(res){
+					if(res.errcode == 0){
+						alert('收藏成功');
+						window.location.reload();
+					}else{
+						alert(res.errmsg?res.errmsg:'');
+					}
+				});
+			});
+		});
+	</script>
+</html>

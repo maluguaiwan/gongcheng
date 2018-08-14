@@ -1,0 +1,152 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__ADMIN__/css/assets.css" />
+{/block}
+{block name="main"}
+<div class="box_form">
+    <div class="box_content">
+        <form action="{:url('')}" class="layui-form layui-form-pane" id="admin">
+            <div class="layui-form-item">
+                <label class="layui-form-label">下拉框</label>
+                <div class="layui-input-inline">
+                    <select name="ykb_selected" lay-verify="required">
+                        <option value="">请选择一个城市</option>
+                        <option {eq name="info.ykb_selected" value="1"}selected{/eq} value="1">北京</option>
+                        <option {eq name="info.ykb_selected" value="2"}selected{/eq} value="2">上海</option>
+                        <option {eq name="info.ykb_selected" value="3"}selected{/eq} value="3">广州</option>
+                        <option {eq name="info.ykb_selected" value="4"}selected{/eq} value="4">深圳</option>
+                        <option {eq name="info.ykb_selected" value="5"}selected{/eq} value="5">杭州</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">text</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="ykb_input_text" value="{$info.ykb_input_text|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">请输入标题</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">checkbox</label>
+                <div class="layui-input-inline">
+                    {php} $ykb_input_checkboxArray = explode(',',$info['ykb_input_checkbox']);{/php}
+                    <input type="checkbox" value="1" name="ykb_input_checkbox[1]" {if condition='in_array(1,$ykb_input_checkboxArray)'}checked{/if} lay-verify="required" title="选项1">
+                    <input type="checkbox" value="2" name="ykb_input_checkbox[2]" {if condition='in_array(2,$ykb_input_checkboxArray)'}checked{/if} lay-verify="required" title="选项2">
+                    <input type="checkbox" value="3" name="ykb_input_checkbox[3]" {if condition='in_array(3,$ykb_input_checkboxArray)'}checked{/if} lay-verify="required" title="选项3">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">排序</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="sort" value="{$info.sort|default='50'}" lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-upload">
+                    <label class="layui-form-label">单图</label>
+                    <div class="layui-input-inline">
+                        <button type="button" class="layui-btn and-bg-{$skin_name|default='default'} upload_one">上传头像</button>
+                        <input type="hidden" name="image" value="{$info.image|default=''}">
+                        <div class="layui-upload-list">
+                            <img class="layui-upload-img" {notempty name="info.image"} src="{$info.image|default=''}"{/notempty} width="150" height="150">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">多图上传</label>
+                <div class="layui-input-block">
+                    <div id="uploader" class="wu-example">
+                        <div class="queueList">
+                            <div id="dndArea" class="placeholder">
+                                <div id="filePicker"></div>
+                                <p>或将照片拖到这里，单次最多可选300张</p>
+                            </div>
+                        </div>
+                        <div class="statusBar" style="display:none;">
+                            <div class="progress">
+                                <span class="text">0%</span>
+                                <span class="percentage"></span>
+                            </div>
+                            <div class="info"></div>
+                            <div class="btns">
+                                <div id="filePicker2"></div>
+                                <div class="uploadBtn">开始上传</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-input-block" id="webupload_hidden_img_show">
+                    {php}//也可以在控制器处理数据输出
+                    if(!empty($info['pics'])){
+                        $info['pics']=json_decode($info['pics'],true);
+                    }
+                    {/php}
+                    {notempty name="info.pics"}
+                        {foreach name='info.pics' item='vo' empty="暂时没有数据"}
+                        <div style="float: left">
+                            <img src="{$vo}" width="150px" class="img-thumbnail img_show">
+                            <div style="text-align: center;cursor: pointer;" onclick="webupload_img_del(this)" webupload_img_del_id="{$key}" class="webupload_img_del">删除</div>
+                        </div>
+                        {/foreach}
+                    {/notempty}
+                </div>
+                <div id="webupload_hidden_input">
+                    {notempty name="info.pics"}
+                        {foreach name='info.pics' item='vo'}
+                        <input type="hidden" name="pics[{$key}]" value="{$vo}">
+                        {/foreach}
+                    {/notempty}
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">描述</label>
+                <div class="layui-input-inline">
+                    <textarea name="description" placeholder="请输入内容" class="layui-textarea">{$info.description|default=''}</textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">内容</label>
+                <div class="layui-input-inline">
+                    <textarea name="content" class="king_content" cols="100" rows="20">{$info.content|default=''}</textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">日期</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="ykb_date" placeholder="请选择日期" autocomplete="off" class="layui-input date">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="status" {eq name="info.status" value="1"}checked{/eq} title="正常" value="1" checked />
+                    <input type="radio" name="status" {eq name="info.status" value="2"}checked{/eq} title="关闭" value="2" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <input type="hidden" name="id" value="{$info.id|default=''}">
+                    <button class="layui-btn and-bg-{$skin_name|default='default'}" lay-submit lay-filter="info_submit">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+<script type="text/javascript">
+    layui.use('info')
+</script>
+{/block}

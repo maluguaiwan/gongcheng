@@ -1,0 +1,129 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__ADMIN__/css/assets.css" />
+{/block}
+{block name="main"}
+<div class="box_form">
+    <div class="box_content">
+        <div>
+            <fieldset class="layui-elem-field layui-field-title site-title">
+                <legend><a name="attr">基本信息</a></legend>
+            </fieldset>
+            <table class="layui-table">
+                <tbody>
+                <tr>
+                    <td>微信头像： <img src="{$info.headimgurl}" height="80px"> </td>
+                </tr>
+                <tr>
+                    <td>微信昵称：{$info.nickname} </td>
+                </tr>
+                <tr>
+                    <td>性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别：{$sex_arr[$info.sex]}</td>
+                </tr>
+                <tr>
+                    <td>区&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;域：{$info.country} {$info.province} {$info.city}</td>
+                </tr>
+                <tr>
+                    <td>余&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;额：{$info.amount} 元</td>
+                </tr>
+                <tr>
+                    <td>总&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;额：{$info.total_amount} 元</td>
+                </tr>
+                <tr>
+                    <td>手机绑定：{empty name='vo.mobile'}未绑定{else}{$info.name}<br>{$info.mobile}{/empty}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <fieldset class="layui-elem-field layui-field-title site-title">
+                <legend><a name="attr">银行卡信息</a></legend>
+            </fieldset>
+            <table class="layui-table">
+                <tbody>
+                <tr>
+                    <td>银行卡号：{$bank_info.bank_number|default='未填写'} </td>
+                </tr>
+                <tr>
+                    <td>开户银行：{$bank_info.bank_name|default='未填写'} </td>
+                </tr>
+                <tr>
+                    <td>开户支行：{$bank_info.bank_branch_name|default='未填写'} </td>
+                </tr>
+                <tr>
+                    <td>开户姓名：{$bank_info.bank_username|default='未填写'} </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <fieldset class="layui-elem-field layui-field-title site-title">
+                <legend><a name="attr">收货信息</a></legend>
+            </fieldset>
+            <table class="layui-table">
+                <tbody>
+                <tr>
+                    <td>收货人：{$address_info.name|default='未填写'} </td>
+                </tr>
+                <tr>
+                    <td>联系电话：{$address_info.mobile|default='未填写'} </td>
+                </tr>
+                <tr>
+                    <td>收货地址：{$address_info.address|default='未填写'} </td>
+                </tr>
+                <tr>
+                    <td>门牌号：{$address_info.unit|default='未填写'} </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <fieldset class="layui-elem-field layui-field-title site-title">
+                <legend><a name="attr">优惠券信息</a></legend>
+            </fieldset>
+            <table class="layui-table">
+                <colgroup>
+                    <col width="*">
+                    <col width="*">
+                    <col width="*">
+                    <col width="*">
+                    <col width="*">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>标题</th>
+                    <th>描述</th>
+                    <th>优惠券低值</th>
+                    <th>有效期</th>
+                    <th>使用状态</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach name='coupons' item='vo'}
+                <tr>
+                    <td>{$vo.coupon.title} </td>
+                    <td>{$vo.coupon.description} </td>
+                    <td>{$vo.coupon.amount} </td>
+                    {gt name="$vo.coupon.use_time_zh" value='0'}
+                    <td>有效期至{$vo.coupon.use_time_zh} </td>
+                    {else}
+                    <td>已过期</td>
+                    {/gt}
+                    <td>{eq name='vo.status' value='1'}未使用{else}已使用{/eq} </td>
+                </tr>
+                {/foreach}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+<script type="text/javascript">
+    layui.use('info',function () {
+        var $=layui.jquery;
+        $('.title').hide();
+    })
+</script>
+{/block}

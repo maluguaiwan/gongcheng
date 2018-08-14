@@ -1,0 +1,65 @@
+{include file="common/header"}
+<link rel="stylesheet" type="text/css" href="/static/home/layui/css/layui.css"/>
+<style>
+	.biaoti .active{
+		color: red;
+	}
+	.layui-flow-more{
+		font-size: 2.5em;
+	}
+</style>
+	<body>
+		<div class="shangbu">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="{:url('home_index')}"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">{$ctitle|default="在线医生"}</div>
+			</div>
+			<div class="biaoti">
+				<div class="sort moren active" data-type="default">默认</div>
+				<div class="sort xiaoliang" data-type="good">好评</div>
+				<div class="sort jiage" data-type="price">价格</div>
+			</div>
+		</div>
+		<div class="tuijian_fenlei2" id="data-content"></div>
+		<div class="tj_neirong2"></div> 
+		{include file="common/footer"}
+		<script src="/static/home/js/jquery.min.js"></script>
+		<script src="/static/home/layui/layui.all.js"></script>
+		{include file="common/share"}
+	</body>
+	<script>
+		layui.use('flow', function(){
+			var dataUrl = "{:url('doctor_list_data',['category_id'=>$category_id])}";
+		  	var flow = layui.flow;
+		  	//信息流
+		  	flow.load({
+			    elem: '#data-content' //指定列表容器
+			    ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+			      var lis = [];
+			      //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+			      $.get(dataUrl,{page:page},function(res){
+			        //假设你的列表返回在data集合中
+			        layui.each(res.data, function(index, item){
+			        	var html = '<div class="tuijianyao"><div class="tuijianyao_left">';
+			        	html += '<a href="javascript:;"><img src="'+item.faceimgurl+'" width="388" height="244" border="0" /></a></div>';
+			        	html += '<div class="tuijianyao_right"><div class="right_1">'+item.name+'</div>';
+			        	html += '<div class="right_2x">'+item.description+'</div>';
+			        	html += '<div class="right_2x">解答：'+item.answer_count+'次&nbsp;&nbsp;&nbsp;&nbsp;好评：'+item.praise+'% </div>';
+			        	html += '<div class="right_3x">价格：'+item.advisory_price+'元/次 </div>';
+			        	html += '<div class="right_4"><a href="'+item.chat_url+'"><div class="zixun">开始咨询</div></a>';
+			        	html += '<a href="'+item.comment_url+'"><div class="chakan">查看评论</div></a></div></div></div>';
+			          	lis.push(html);
+			        }); 
+			        
+			        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+			        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+			        next(lis.join(''), res.data && res.data.length == 5);    
+			      });
+			    }
+		  	});
+		  	
+		});
+	</script>
+</html>

@@ -1,0 +1,253 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__ADMIN__/css/assets.css" />
+<style>
+    .layui-form-yk-text{
+        padding: 8px 15px;
+        line-height: 20px;
+    }
+</style>
+{/block}
+{block name="main"}
+<div class="box_form">
+
+    <div class="box_content">
+        <div>
+            <fieldset class="layui-elem-field layui-field-title site-title">
+                <legend><a name="attr">基本信息</a></legend>
+            </fieldset>
+            <table class="layui-table">
+                <thead>
+                    <tr>
+                        <th>订单id</th>
+                        <th>订单编号</th>
+                        <th>下单用户</th>
+                        <th>电话</th>
+                        <th>订单总金额</th>
+                        <th>支付名称</th>
+                        <th>订单状态</th>
+                        <th>下单时间</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{$info.order_info.id}</td>
+                    <td>{$info.order_info.order_number}</td>
+                    <td>{$info.order_info.member_name|yk_default='未设置'}</td>
+                    <td>{$info.order_info.member_mobile|yk_default='未设置'}</td>
+                    <td>{$info.order_info.total_amount}元</td>
+                    <td>{$info.order_info.pay_name}</td>
+                    <td>{$info.order_info.status|get_order_status}</td>
+                    <td>{$info.order_info.create_time}</td>
+                    <td>{$info.order_info.note}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <fieldset class="layui-elem-field layui-field-title site-title">
+                <legend><a name="attr">收货信息</a></legend>
+            </fieldset>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <td>收货姓名</td>
+                    <td>收货手机</td>
+                    <td>收货地址</td>
+                    <td>收货门牌号</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{$info.order_info.name}</td>
+                    <td>{$info.order_info.member_mobile|yk_default='未设置'}</td>
+                    <td>{$info.order_info.address}</td>
+                    <td>{$info.order_info.unit}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <fieldset class="layui-elem-field layui-field-title site-title">
+                <legend><a name="attr">商品信息</a></legend>
+            </fieldset>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>商品名称</th>
+                    <th>封面图</th>
+                    <th>单价</th>
+                    <th>数量</th>
+                    <th>总价</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach name='info.order_product_list' item='vo'}
+                <tr>
+                    <td>{$vo.title}</td>
+                    <td><img src="{$vo.image}" width="80px" height="80px"></td>
+                    <td>{$vo.price}元</td>
+                    <td>{$vo.count}</td>
+                    <td>{$vo.price*$vo.count}元</td>
+                </tr>
+                {/foreach}
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <fieldset class="layui-elem-field layui-field-title site-title">
+                <legend><a name="attr">费用信息</a></legend>
+            </fieldset>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>小计</th>
+                    <th>优惠券抵扣</th>
+                    <th>应付</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{$info.order_info.total_amount}元</td>
+                    <td>{$info.coupon_info.amount}元</td>
+                    <td>{$info.order_info.pay_amount}元</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <form action="{:url('')}" class="layui-form layui-form-pane" id="admin">
+        <div>
+            <fieldset class="layui-elem-field layui-field-title site-title">
+                <legend><a name="attr">订单操作</a></legend>
+            </fieldset>
+            <div class="layui-form-item">
+                <label class="layui-form-label">快递名称</label>
+                <div class="layui-input-inline">
+                    {eq name="info.order_info.status" value="1"}
+                    <input type="text" name="courier_name" value="{$info.courier_name|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-input">
+                    {else}
+                    <div class="layui-form-yk-text">
+                    {$info.order_info.courier_name}
+                    </div>
+                    {/eq}
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">快递编号</label>
+                <div class="layui-input-inline">
+                    {eq name="info.order_info.status" value="1"}
+                    <input type="text" name="courier_sn" value="{$info.courier_sn|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-input">
+                    {else}
+                    <div class="layui-form-yk-text">
+                    {$info.order_info.courier_sn}
+                    </div>
+                    {/eq}
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">操作备注</label>
+                <div class="layui-input-inline">
+                    {eq name="info.order_info.status" value="1"}
+                    <textarea name="admin_note" placeholder="请输入内容" lay-verify="required" class="layui-textarea">{$info.admin_note|default=''}</textarea>
+                    {else}
+                    <div class="layui-form-yk-text">
+                    {$info.order_info.admin_note}
+                    </div>
+                    {/eq}
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <input type="hidden" name="id" value="{$info.order_info.id}">
+                    {switch $info.order_info.status}
+                    {case 0}<b style="color:red;">该订单未付款，无法进行订单操作</b>{/case}
+                    {case 1}
+                        <input type="hidden" name="status" value="2">
+                        <button class="layui-btn and-bg-{$skin_name|default='default'}" lay-submit lay-filter="order_send_submit">发货</button>
+                    {/case}
+                    {case 2}
+                        <input type="hidden" name="status" value="3">
+                        <button class="layui-btn and-bg-{$skin_name|default='default'}" lay-submit lay-filter="order_send_submit">完成订单</button>
+                    {/case}
+                    {case 3}
+                        该订单已完成
+                    {/case}
+                    {default /}default
+                    {/switch}
+                </div>
+            </div>
+        </div>
+        </form>
+
+        <!--<div>
+        <fieldset class="layui-elem-field layui-field-title site-title">
+            <legend><a name="attr">操作记录</a></legend>
+        </fieldset>
+        <table class="layui-table">
+            <tr>
+                <th>操作者</th>
+                <th>操作时间</th>
+                <th>订单状态</th>
+                <th>付款状态</th>
+                <th>描述</th>
+                <th>备注</th>
+            </tr>
+            <tbody>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>-->
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+<script type="text/javascript">
+    layui.use('info',function () {
+        var layer = layui.layer,
+            form = layui.form,
+            $ = layui.jquery;
+        form.on('submit(order_send_submit)', function(data){
+            var order_id='{$info.order_info.id}';
+            if (order_id==''){
+                alert('参数错误');
+                return false;
+            }
+            var url = data.form.getAttribute('action');
+            var data = data.field;
+            // console.log(url);
+            // console.log(data);
+            if (confirm('您确定此操作吗？')){
+                $.ajax({
+                    url:url,
+                    data:data,
+                    type:'post',
+                    async: false,
+                    success:function(res) {
+                        if(res.code == 200) {
+                            layer.alert(res.msg, function(index){
+                                location.href = res.url;
+                            })
+                        } else {
+                            layer.msg(res.msg, {icon: 5,time:2000});
+                        }
+                    }
+                })
+            }
+
+            return false;
+        });
+    })
+</script>
+{/block}

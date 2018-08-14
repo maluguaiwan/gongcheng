@@ -1,0 +1,45 @@
+{extend name="base" /}
+{block name="main"}
+<form class="layui-form" id="admin">
+    <input type="hidden" name="table" value="member_level">
+    <input type="hidden" name="id_name" value="id">
+    <table class="layui-table" lay-even="" lay-skin="row" lay-size="sm">
+      <colgroup>
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="80px">
+        <col width="*">
+        <col width="*">
+      </colgroup>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>名称</th>
+        <th>推荐购药提成</th>
+        <th>推荐患者咨询提成</th>
+        <th>推荐医生人头费</th>
+      </tr>
+      </thead>
+      <tbody>
+      {foreach name="list" item="vo"}
+      <tr>
+        <td>{$vo.id}</td>
+        <td><input table="member_level" id_name="id" id_value="{$vo.id}" field="name" type="text" value="{$vo.name}" placeholder="请输入" class="layui-input list_text"></td>
+        <td><input table="member_level" id_name="id" id_value="{$vo.id}" field="protect" type="text" value="{$vo.protect}" placeholder="请输入" class="layui-input list_text" style="width: 100px;display: inline;">  %</td>
+        <td><input table="member_level" id_name="id" id_value="{$vo.id}" field="advice" type="text" value="{$vo.advice}" placeholder="请输入" class="layui-input list_text" style="width: 100px;display: inline;">  %</td>
+        <td><input table="member_level" id_name="id" id_value="{$vo.id}" field="head" type="text" value="{$vo.head}" placeholder="请输入" class="layui-input list_text" style="width: 100px;display: inline;">  元</td>
+      </tr>
+      {/foreach}
+      </tbody>
+    </table>
+</form>
+<div style="margin-bottom:45px;margin-right:20px;float: right;">{$list->render()|default=''|raw}</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    layui.use('list')
+</script>
+{/block}

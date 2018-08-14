@@ -1,0 +1,67 @@
+{if condition="$is_doctor == 0"}
+<div class="footer">
+	<div class="anniu">
+		<a href="{:url('home_index')}"><img src="/static/home/img/an1.jpg" width="126" height="110" border="0" /></a>
+	</div>
+	<div class="anniu">
+		<a href="{:url('doctor_list')}"><img src="/static/home/img/an2.jpg" width="126" height="110" border="0" /></a>
+	</div>
+	<div class="anniu">
+		<a href="{:url('medicine_list')}"><img src="/static/home/img/an3.jpg" width="126" height="110" border="0" /></a>
+	</div>
+	<div class="anniu">
+		<a href="{:url('car_list')}"><img src="/static/home/img/an4.jpg" width="126" height="110" border="0" /></a>
+	</div>
+	<div class="anniu">
+		<a href="{:url('member_index')}"><img src="/static/home/img/an5.jpg" width="126" height="110" border="0" /></a>
+	</div>
+</div>
+{else}
+<style>
+	.anniu {
+		width:25%;
+	}
+</style>
+<div class="footer">
+	<div class="anniu">
+		<a href="{:url('home_index')}"><img src="/static/home/img/an1.jpg" width="126" height="110" border="0" /></a>
+	</div>
+	<div class="anniu">
+		<a href="{:url('member_list')}" style="font-size: 2.5em;">我的患者</a>
+	</div>
+	<div class="anniu">
+		<a href="{:url('medicine_doctor_car_list')}"><img src="/static/home/img/an4.jpg" width="126" height="110" border="0" /></a>
+	</div>
+	<div class="anniu">
+		<a href="{:url('member_index')}"><img src="/static/home/img/an5.jpg" width="126" height="110" border="0" /></a>
+	</div>
+</div>
+<script>
+	var memberId = "{$member.id}";
+	$(function(){
+		if(!window.ws){
+			var ws = new WebSocket("ws://"+document.domain+":8282");
+	       	ws.onopen = function(){
+	       		console.log('onopen');
+				var senddata = {
+					type:'doctor_init',
+					uid:memberId
+				};
+				ws.send(JSON.stringify(senddata));
+	       	};
+	       	// 当有消息时根据消息类型显示不同信息
+	       	ws.onmessage = function(e){
+	       		console.log(e);
+	       	};
+	       	ws.onclose = function() {
+	          	console.log("连接关闭，定时重连");
+	       	};
+	       	ws.onerror = function() {
+	           	console.log("出现错误");
+	       	};
+	       	window.ws = ws;
+		}
+	});
+</script>
+{/if}
+

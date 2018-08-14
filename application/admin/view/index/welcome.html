@@ -1,0 +1,111 @@
+{extend name="base" /}
+{block name="header"}
+<style type="text/css">
+    .admin_main{
+        padding-top: 10px!important;
+    }
+</style>
+{/block}
+{block name="main"}
+<div class="layui-tab-item layui-show admin_home">
+    <div class="admin_content">
+        <div class="admin_content_box">
+            <div id="admHome" class="layui-row">
+                <div class="layui-hide-sm layui-show-md-block homeRght">
+                    <div class="headimg">
+                        <img  src="{$login.thumb|get_url|default='__ADMIN__/images/default_headimg.png'}" alt=""/>
+                    </div>
+                    <div class="welcome en-font">
+                        您好！<span>{$login.nickname|default=''}</span>
+                    </div>
+                    <div class="time bline en-font">
+                        <b></b>
+                        <i class="fa fa-clock-o" aria-hidden="true"></i><span class="showtime">{date_format='Y-m-d H:i:s'}</span>
+                    </div>
+                    <div class="info bline en-font">
+                        真实姓名：<span class="c">{$login.username|default='请叫偶宝宝'}</span>
+                    </div>
+                    <div class="info bline en-font">
+                        登录时间：<span class="c">{$login.login_time|default='上个世纪'}</span>
+                    </div>
+                    <div class="info bline en-font">
+                        登录地址：<span class="c">{$login.login_ip|default='银河系'}</span>
+                    </div>
+                </div>
+
+
+                <div class="layui-col-xs12 layui-col-sm12 layui-col-md12 homeLeft">
+                    <div class="cms_count layui-row">
+                        <ul class="grid">
+                            <li class="li-1 layui-col-xs6 layui-col-sm6 layui-col-md3">
+                                <div class="info">
+                                    <i class="icon"><img  src="{$root|default='__ADMIN__/images/article.png'}" alt=""/></i>
+                                    <span class="number en-font">{if empty($count.article)}0{elseif $count.article<999}{$count.article}{else}999+{/if}</span>
+                                    <span class="name">文章</span>
+                                </div>
+
+                            </li>
+                            <li class="li-2 layui-col-xs6 layui-col-sm6 layui-col-md3">
+                                <div class="info">
+                                    <i class="icon"><img  src="{$root|default='__ADMIN__/images/product.png'}" alt=""/></i>
+                                    <span class="number en-font">{if empty($count.product)}0{elseif $count.product<999}{$count.product}{else}999+{/if}</span>
+                                    <span class="name">产品</span>
+                                </div>
+                            </li>
+                            <li class="li-3 layui-col-xs6 layui-col-sm6 layui-col-md3">
+                                <div class="info">
+                                    <i class="icon"><img  src="{$root|default='__ADMIN__/images/album.png'}" alt=""/></i>
+                                    <span class="number en-font">{if empty($count.album)}0{elseif $count.album<999}{$count.album}{else}999+{/if}</span>
+                                    <span class="name">图集</span>
+                                </div>
+                            </li>
+                            <li class="li-4 layui-col-xs6 layui-col-sm6 layui-col-md3">
+                                <div class="info">
+                                    <i class="icon"><img  src="{$root|default='__ADMIN__/images/user.png'}" alt=""/></i>
+                                    <span class="number en-font">{if empty($count.user)}0{elseif $count.user<999}{$count.user}{else}999+{/if}</span>
+                                    <span class="name">会员</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="cms_about layui-row clearfix">
+                        <div class="server">
+                            <div class="info">
+                                <div class="con">
+                                    <table class="layui-table">
+                                        <tr>
+                                            <th>操作系统</th>
+                                            <th>服务器环境</th>
+                                            <th>服务器IP</th>
+                                            <th>上传最大限制</th>
+                                        </tr>
+                                        <tr>
+                                            <td>{$dev.php_os|default='不关心'}</td>
+                                            <td>{$dev.server_software|default='不关心'}</td>
+                                            <td>{$dev.server_name|default='不关心'}</td>
+                                            <td>{$dev.upload_max_filesize|default='不关心'}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>PHP版本</th>
+                                            <th>MYSQL版本</th>
+                                            <th>脚本超时时间</th>
+                                            <th>CURL支持</th>
+                                        </tr>
+                                        <tr>
+                                            <td>{$dev.php_version|default='不关心'}</td>
+                                            <td>{$dev.mysql_version|default='不关心'}</td>
+                                            <td>{$dev.max_execution_time|default='不关心'}</td>
+                                            <td>{$dev.curl_extension|default='不关心'}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                {/block}

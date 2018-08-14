@@ -1,0 +1,58 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/layer/layer.js"></script>
+{include file="common/share"}
+<body>
+	<div class="shangbu_qd">
+		<div class="tou ">
+			<div class="tou_left">
+				<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+			</div>
+			<div class="tou_wenbenyu2">填写备注</div>
+		</div>
+	</div>
+	<div class="tuijian_fenlei2_qdx">
+		<div class="chanpinti">订单备注</div>
+		<div class="tuijianyao">
+			<div class="wenbenxx">
+				<div class="wenbenx1">产品备注</div>
+				<div class="wenbenx2"><input type="text" name="remark" id="remark" value="{$remark|default=''}" class="xiewenbenx" /></div>
+			</div>
+
+			<div class="baocun">
+				<a href="javascript:;" id="subbtn">
+					<div class="anniubaocun">确定</div>
+			</div>
+			<div class="tixianbeizhu"></div>
+		</div>
+	</div>
+	<script>
+			var url = "{$url}";
+			var postUrl="{:url('order_edit_remark')}";
+			$(function(){
+				$("#subbtn").click(function(){
+					var remark = $("#remark").val();
+					var loading = layer.open({type: 2,shadeClose:false});
+					$.post(postUrl,{remark:remark},function(res){
+						layer.close(loading);
+						if(res.errcode == 0){
+							layer.open({
+							    content: '编辑成功'
+							    ,skin: 'msg'
+							    ,time: 2
+							    ,end:function(){
+							    	window.location.href = url;
+							    }
+							});
+						}else{
+							layer.open({
+							    content: res.errmsg?res.errmsg:'编辑失败'
+							    ,btn: '我知道了'
+							});
+						}
+					},'json');
+				});
+			});
+		</script>
+</body>
+</html>

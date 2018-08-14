@@ -1,0 +1,22 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+{include file="common/share"}
+	<body>
+		<div class="shangbu">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">优惠券</div>
+			</div>
+		</div>
+		<div class="shangju"></div>
+		<div class="youhuiquan">
+			{volist name="coupons" id="vo"}
+			<a href="javascript:;" class="chose" data-id="{$vo.id}" data-coupon="{$vo.coupon_id}" data-amount="{$vo.coupon.amount}">
+				<img src="{$vo.coupon.image|default='/static/home/img/youhuiquan.jpg'}" width="989" height="366" border="0" />
+			</a>
+			{/volist}
+		</div>
+	</body>
+</html>

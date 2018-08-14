@@ -1,0 +1,47 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+{include file="common/share"}
+	<!--<body>
+		<div class="shangbu">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">优惠券</div>
+			</div>
+		</div>
+		<div class="shangju"></div>
+		<div class="youhuiquan">
+			{volist name="coupons" id="vo"}
+			<a href="javascript:;" class="chose" data-id="{$vo.id}" data-coupon="{$vo.coupon_id}" data-amount="{$vo.coupon.amount}">
+				<img src="{$vo.coupon.image|default='/static/home/img/youhuiquan.jpg'}" width="989" height="366" border="0" />
+			</a>
+			{/volist}
+		</div>
+	</body>-->
+<body>
+<div class="shangbu">
+	<div class="tou ">
+		<div class="tou_left">
+			<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+		</div>
+		<div class="tou_wenbenyu2">优惠券</div>
+	</div>
+</div>
+<div class="shangju"></div>
+{volist name="coupons" id="vo"}
+{gt name="$vo.coupon.use_time_zh" value='0'}
+<div class="youhuiquan chose" data-id="{$vo.id}" data-coupon="{$vo.coupon_id}" data-amount="{$vo.coupon.amount}">
+	<div class="yuanzk">{$vo.coupon.amount}元<span class="zhekou2">可低值</span></div>
+	<div class="youxiaoqi">有效期至{$vo.coupon.use_time_zh}</div>
+</div>
+{else}
+<div class="youhuiquan">
+	<div class="yuanzk">{$vo.coupon.amount}元<span class="zhekou2">可低值</span></div>
+	<div class="youxiaoqi">已过期</div>
+</div>
+{/gt}
+{eq name='vo.status' value='1'}未使用{else}已使用{/eq}
+{/volist}
+</body>
+</html>

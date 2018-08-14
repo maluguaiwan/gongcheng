@@ -1,0 +1,75 @@
+{include file="common/header"}
+<link rel="stylesheet" type="text/css" href="/static/home/layui/css/layui.css"/>
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/layer/layer.js"></script>
+{include file="common/share"}
+<style>
+	.layui-flow-more{
+		font-size: 2.5em;
+	}
+</style>
+<body>
+	<div class="shangbu" style="height: auto;">
+		<div class="tou ">
+			<div class="tou_left" onclick="history.back(-1);">
+				<a href="javascript:void(0);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+			</div>
+			<div class="tou_wenbenyu2">专属医生</div>
+		</div>
+	</div>
+	<div class="tuijian_fenlei2x">
+		<div class="sousuox">
+			<div class="sousuox1"><input name="textfield" id="name" type="text" class="tou_wenbenkuang" value="" placeholder="请输入关键词搜索" /></div>
+			<div class="sousuox2">
+				<div class="ssss" id="search">搜索</div>
+			</div>
+		</div>
+		{if condition="$count gt 0"}
+		<div class="weiduxinxi">总共{$count|default='0'}条信息未读</div>
+		{/if}
+		<div class="data-content" id="data-content"></div>
+	</div>
+	<script src="/static/home/layui/layui.js"></script>
+	<script>
+		var dataUrl = "{:url('member_doctor_data')}";
+		layui.use('flow', function(){
+			
+			$("#search").click(function(){
+				data();
+			});
+			
+			data();
+			
+			function data(){
+		  		$("#data-content").children().remove();
+				var flow  = layui.flow;
+				var name = $("#name").val();
+		  		//信息流
+			  	flow.load({
+				    elem: '#data-content' //指定列表容器
+				    ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+				      var lis = [];
+				      //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+				      $.get(dataUrl,{page:page,name:name},function(res){
+				        //假设你的列表返回在data集合中
+				        layui.each(res.data, function(index, item){
+				        	var html = '<a href="'+item.link+'"><div class="liebiaoxx">';
+				        	html += '<div class="liebiao_1"><img src="'+item.headimgurl+'" width="192" height="133" /></div>';
+				        	html += '<div class="liebiao_2"><div class="liebiao_nc">'+item.name;
+				        	if(item.new_message>0){
+				        		html += '<span class="xin">(新信息)</span>';
+				        	}
+				        	html += '</div><div class="liebiao_js">'+item.last_message+'</div></div>';
+				        	html += '<div class="liebiao_3"><img src="/static/home/img/jiantou.jpg" width="43" height="79" /></div></div></a>';
+				          	lis.push(html);
+				        }); 
+				        
+				        next(lis.join(''), res.data && res.data.length == 5);    
+				      });
+				    }
+			  	});
+		  	}
+		});
+	</script>
+</body>
+</html>

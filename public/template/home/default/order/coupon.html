@@ -1,0 +1,85 @@
+{include file="common/header"}
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/layer/layer.js"></script>
+{include file="common/share"}
+<style type="text/css">
+	.layui-m-layercont{
+		font-size: 2.5em;
+	    padding: 2.5rem 5rem !important;
+	}
+</style>
+	<body>
+		<div class="shangbu">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">优惠券</div>
+			</div>
+		</div>
+		<div class="shangju"></div>
+		<!--<div class="youhuiquan">
+			{volist name="coupons" id="vo"}
+			<a href="javascript:;" class="chose" data-id="{$vo.id}" data-coupon="{$vo.coupon_id}" data-amount="{$vo.coupon.amount}">
+				<img src="{$vo.coupon.image|default='/static/home/img/youhuiquan.jpg'}" width="989" height="366" border="0" />
+			</a>
+			{/volist}
+		</div>-->
+		{volist name="coupons" id="vo"}
+		{gt name="$vo.coupon.use_time_zh" value='0'}
+		<div class="youhuiquan chose" data-id="{$vo.id}" data-coupon="{$vo.coupon_id}" data-amount="{$vo.coupon.amount}">
+			<div class="yuanzk">{$vo.coupon.amount}元<span class="zhekou2">可低值</span></div>
+			<div class="youxiaoqi">有效期至{$vo.coupon.use_time_zh}</div>
+		</div>
+		{else}
+		<div class="youhuiquan">
+			<div class="yuanzk">{$vo.coupon.amount}元<span class="zhekou2">可低值</span></div>
+			<div class="youxiaoqi">已过期</div>
+		</div>
+		{/gt}
+		{/volist}
+	</body>
+	<script>
+		var url = "{$url}";
+		var postUrl="{:url('order_edit_coupon')}";
+		var click = false;
+		$(function(){
+			$(".chose").click(function(){
+				if(click){
+					return false;
+				}
+				var id = $(this).data('id');
+				var coupon_id = $(this).data('coupon');
+				var amount = $(this).data('amount');
+				if(id && amount){
+					if(confirm("您确定选择"+amount+"元的优惠券吗?")){
+						var loading = layer.open({type: 2,shadeClose:false});
+						var postData = {
+							id:id
+						};
+						click = true;
+						$.post(postUrl,postData,function(res){
+							layer.close(loading);
+							if(res.errcode == 0){
+								layer.open({
+								    content: '选择成功'
+								    ,skin: 'msg'
+								    ,time: 2
+								    ,end:function(){
+								    	window.location.href = url;
+								    }
+								});
+							}else{
+								layer.open({
+								    content: res.errmsg?res.errmsg:'选择失败'
+								    ,btn: '我知道了'
+								});
+								click = false;
+							}
+						},'json');
+					}
+				}
+			});
+		});
+	</script>
+</html>

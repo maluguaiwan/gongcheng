@@ -1,0 +1,75 @@
+{include file="common/header"}
+<link rel="stylesheet" type="text/css" href="/static/home/layui/css/layui.css"/>
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/layui/layui.js"></script>
+{include file="common/share"}
+
+<style>
+	.biaoti .active{
+		color: red;
+	}
+	.layui-flow-more{
+		font-size: 2.5em;
+	}
+</style>
+	<body>
+		<div class="shangbu">
+			<div class="tou ">
+				<div class="tou_left">
+					<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+				</div>
+				<div class="tou_wenbenyu2">{$ctitle|default="所有药品"}</div>
+			</div>
+			<div class="biaoti">
+				<div class="sort moren active" data-sort="0">默认</div>
+				<div class="sort xiaoliang" data-sort="1">销量</div>
+				<div class="sort jiage" data-sort="2">价格</div>
+			</div>
+		</div>
+		<div class="tuijian_fenlei2" id="data-content"></div>
+		<div class="tj_neirong2"></div>
+		{include file="common/footer"}
+	</body>
+	<script>
+		var search = "{$search}";
+		layui.use('flow', function(){
+			var dataUrl = "{:url('medicine_list_data',['category_id'=>$category_id])}";
+		  	var sort = 0;
+		  	$(".sort").click(function(){
+		  		sort = $(this).data('sort');
+		  		$(this).addClass('active').siblings('.sort').removeClass('active');
+		  		data();
+		  	});
+		  	data();
+		  	function data(){
+		  		$("#data-content").children().remove();
+				var flow  = layui.flow;
+		  		//信息流
+			  	flow.load({
+				    elem: '#data-content' //指定列表容器
+				    ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+				      var lis = [];
+				      //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+				      $.get(dataUrl,{page:page,sort:sort,search:search},function(res){
+				        //假设你的列表返回在data集合中
+				        layui.each(res.data, function(index, item){
+				        	var html = '<div class="tuijianyao"><div class="tuijianyao_left">';
+				        	html += '<a href="'+item.link+'"><img src="'+item.image+'" width="388" height="244" border="0" /></a></div>';
+				        	html += '<div class="tuijianyao_right"><div class="right_1">'+item.title+'</div>';
+				        	html += '<div class="right_2">'+item.description+'</div>';
+				        	var left_price =  (item.originnal_price - item.price) > 0 ? (item.originnal_price - item.price) : 0;
+				        	html += '<div class="right_3">立省'+left_price+'元 </div>';
+				        	html += '<div class="right_4">¥ '+item.price+'元<span class="huagang">&nbsp;&nbsp;&nbsp;&nbsp;<s>¥ '+item.originnal_price+'元</s></span></div></div></div>';
+				          	lis.push(html);
+				        });
+
+				        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+				        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+				        next(lis.join(''), res.data && res.data.length == 5);
+				      });
+				    }
+			  	});
+		  	}
+		});
+	</script>
+</html>

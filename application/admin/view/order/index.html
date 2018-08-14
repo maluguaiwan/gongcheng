@@ -1,0 +1,55 @@
+{extend name="base" /}
+{block name="main"}
+<form class="layui-form" id="admin">
+    <input type="hidden" name="table" value="shili">
+    <input type="hidden" name="id_name" value="id">
+    <table class="layui-table" lay-even="" lay-skin="row" lay-size="sm">
+      <colgroup>
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+      </colgroup>
+      <thead>
+      <tr>
+        <th>订单ID</th>
+        <th>订单编号</th>
+        <th>下单用户</th>
+        <th>订单总金额</th>
+        <th>支付名称</th>
+        <th>订单状态</th>
+        <th>下单时间</th>
+        <th>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      {foreach name="list" item="vo"}
+      <tr>
+        <td>{$vo.id}</td>
+        <td>{$vo.order_number}</td>
+        <td>{$vo.member_name|yk_default='未设置'}</td>
+        <td>{$vo.total_amount}</td>
+        <td>{$vo.pay_name}</td>
+        <td>{$vo.status|get_order_status}</td>
+        <td>{$vo.create_time}</td>
+        <td>
+          <!--<a href="{:url('edit',['id'=>$vo.id])}" data-tip-text="修改" data-tip-type="1" class="layui-btn and-bg-{$skin_name|default='default'} layui-btn-xs tooltip"><i class="layui-icon"></i></a>-->
+          <a href="{:url('detail',['id'=>$vo.id])}" data-tip-text="详情" data-tip-type="1" class="layui-btn and-bg-{$skin_name|default='default'} layui-btn-xs tooltip"><i class="fa fa-file-text"></i></a>
+          <a id="{$vo.id}" url="{:url('del')}" data-tip-text="删除" data-tip-type="1" href="javascript:;" class="layui-btn and-bg-{$skin_name|default='default'} layui-btn-xs delete tooltip"><i class="layui-icon"></i></a>
+        </td>
+      </tr>
+      {/foreach}
+      </tbody>
+    </table>
+</form>
+<div style="margin-bottom:45px;margin-right:20px;float: right;">{$list->render()|default=''|raw}</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    layui.use('list')
+</script>
+{/block}

@@ -1,0 +1,214 @@
+{include file="common/header"}
+<link rel="stylesheet" type="text/css" href="/static/home/layui/css/layui.css" />
+<script src="/static/home/js/jquery.min.js"></script>
+<script src="/static/home/layer/layer.js"></script>
+{include file="common/share"}
+<style>
+	.layui-flow-more {
+		font-size: 2.5em;
+	}
+	.shumu{
+	    width: 230px;
+		padding-right: 20px;
+	}
+	.icon{
+		width: 40px;
+	    height: 40px;
+	    display: inline-block;
+	    line-height: 40px;
+	    border: 1px solid;
+	    border-radius: 40px;
+	    text-align: center;
+	}
+</style>
+<body>
+	<div class="shangbu_qd">
+		<div class="tou ">
+			<div class="tou_left">
+				<a href="javascript:void(0);" onclick="javascript:history.back(-1);"><img src="/static/home/img/leftjiantou_icon.png" width="48" height="48" border="0" /></a>
+			</div>
+			<div class="tou_wenbenyu2">药品清单</div>
+		</div>
+
+	</div>
+	<div class="tuijian_fenlei2_qd">
+		{notempty name="data"}
+			{volist name="data" id="vo"}
+			<div class="tuijianyao">
+				<div class="xuanze">
+					<input type="checkbox" name="radiobutton" value="1" class="daquan" id="check_product_{$vo.id}" data-id="{$vo.id}" data-price="{$vo.total_price}" data-left_price="{$vo.left_price}" />
+				</div>
+				<div class="tuijianyao_left">
+					<a href="{:url('medicine_detail',['id'=>$vo['product']['id']])}"><img src="{$vo.product.image}" width="388" height="244" border="0" /></a>
+				</div>
+				<div class="tuijianyao_right">
+					<div class="right_1">{$vo.product.title}</div>
+					<div class="right_2">{$vo.product.description}</div>
+					<div class="right_3">立省<span id="left_price_{$vo.id}">{$vo.product.left_price}</span>元</div>
+					<div class="jiage_zj">
+						<div class="right_4_jg">¥ <span id="total_price_{$vo.id}">{$vo.product.price}</span>元</div>
+						<div class="shumu">
+							<i class="icon icon-plus" data-id="{$vo.id}" data-count="{$vo.count|default=0}" data-price="{$vo.product.price}" data-orgin_price="{$vo.product.originnal_price}">+</i>
+							<span id="count_{$vo.id}" style="margin: 0 30px;">{$vo.count|default='0'}</span>
+							<i class="icon icon-sub" data-id="{$vo.id}" data-count="{$vo.count|default=0}" data-price="{$vo.product.price}" data-orgin_price="{$vo.product.originnal_price}">-</i>
+							<!-- <img src="/static/home/img/shumu.jpg" width="227" height="61" /> -->
+						</div>
+					</div>
+				</div>
+			</div>
+			{/volist}
+		{else}
+			<div class="tuijianyao" style="text-align: center;font-size: 2.5em;">暂无清单,请选购药品</div>
+		{/notempty}
+	</div>
+	<div class="tj_neirong2"></div>
+	{notempty name="data"}
+	<div class="tuijianyao" style="text-align: right;background-color: #EFEFF4;">
+		<a href="javascript:;" id="delOrder">
+			<div class="anniu_qqdd" style="padding-right: 25px;">删除订单</div>
+		</a>
+	</div>
+	{/notempty}
+	<div class="footer">
+		<div class="jiesuanjiagex"><span class="zongjijia">总计：¥ <span id="total_price">0</span>元</span> &nbsp;&nbsp; <span class="youhuix">已优惠：<s>¥<span id="left_price">0</span></s>元</span></div>
+		<a href="javascript:;" id="createOrder">
+			<div class="anniu_qqdd">我要结算</div>
+		</a>
+		<a href="javascript:;" id="delOrder">
+			<div class="anniu_qqdd">删除订单</div>
+		</a>
+	</div>
+	<div style="display: none;">
+		<input type="hidden" name="ids" value="" id="car_id" />
+	</div>
+	<script>
+		var click = false;
+		var price = 0;
+		var left_price = 0;
+		var car_id = [];
+		var orderUrl = "{:url('order_create')}";
+		var updateProductCountUrl = "{:url('product_update_count')}";
+		var carDelUrl = "{:url('car_del')}";
+		$(function(){
+			var updatePrice = function(){
+				var total = 0;
+				var left = 0;
+				$.each($(".daquan"), function(item) {
+					if($(this).prop('checked')){
+						var tmp_price = $(this).data('price');
+						var tmp_left  = $(this).data('left_price');
+						total += parseFloat(tmp_price);
+						left += parseFloat(tmp_left);
+					}
+				});
+				$("#total_price").text(total);
+				$("#left_price").text(left);
+			}
+			$("#delOrder").click(function(){
+				if(car_id.length == 0){
+					alert('请选择要删除的订单');
+					return false;
+				}
+				if(confirm('您确定要删除选中的订单吗?')){
+					var loading = layer.open({type: 2,shadeClose:false});
+					$.post(carDelUrl,{ids:car_id.join(',')}).done(function(res){
+						layer.close(loading);
+						if(res.errcode == 0){
+							layer.open({content: '删除成功',skin:'msg',time: 2,end:function(){window.location.reload()}});
+						}else{
+							alert('删除失败');
+						}
+					});
+				}
+				
+			});
+			$(".daquan").click(function(){
+				var tmp_price = $(this).data('price');
+				var tmp_left  = $(this).data('left_price');
+				if($(this).prop("checked")){
+					price+=tmp_price;
+					left_price+= tmp_left;
+				}else{
+					price = price - tmp_price < 0 ? 0 : (price - tmp_price);
+					left_price = left_price - tmp_left < 0 ? 0 : (left_price - tmp_left);
+				}
+				var id = $(this).data('id');
+				if($.inArray(id,car_id) == -1){
+					car_id.push(id);
+				}
+				$("#car_id").val(car_id.join(','));
+				updatePrice();
+			});
+			
+			$("#createOrder").click(function(){
+				if(click){
+					return false;
+				}
+				if(car_id.length == 0){
+					layer.open({content: '请选择结算的药品',skin:'msg',time: 2});
+					return false;
+				}
+				click = true;
+				var loading = layer.open({type: 2,shadeClose:false});
+				window.location.href = orderUrl+"?ids="+$("#car_id").val();
+			});
+			
+			// 单个商品增加数量
+			$(".icon-plus").click(function(){
+				var id = $(this).data('id');
+				var price = $(this).data('price');
+				var orgin_price = $(this).data('orgin_price');
+				if(!id){
+					return false;
+				}
+				var count = Number($("#count_"+id).text());
+				var total_price = parseFloat($("#check_product_"+id).data('price'));
+				var left_price = parseFloat($("#check_product_"+id).data('left_price'));
+				count += 1;
+				$.getJSON(updateProductCountUrl,{id:id,type:'plus'},function(res){
+					if(res.errcode == 0){
+						var single_left_price = parseFloat(orgin_price) - parseFloat(price);
+						var new_total_price = total_price + parseFloat(price);
+						var new_left_price = left_price +  single_left_price;
+						//$("#total_price_"+id).text(new_total_price);
+						//$("#left_price_"+id).text(new_left_price);
+						$("#count_"+id).text(count);
+						$("#check_product_"+id).data('price',new_total_price);
+						$("#check_product_"+id).data('left_price',new_left_price);
+						updatePrice();
+					}
+				});
+			});
+			
+			$(".icon-sub").click(function(){
+				var id = $(this).data('id');
+				var price = $(this).data('price');
+				var orgin_price = $(this).data('orgin_price');
+				if(!id){
+					return false;
+				}
+				var count = Number($("#count_"+id).text());
+				if(count <= 1){
+					return false;
+				}
+				var total_price = parseFloat($("#check_product_"+id).data('price'));
+				var left_price = parseFloat($("#check_product_"+id).data('left_price'));
+				count = count - 1;
+				$.getJSON(updateProductCountUrl,{id:id,type:'sub'},function(res){
+					if(res.errcode == 0){
+						var single_left_price = parseFloat(orgin_price) - parseFloat(price);
+						var new_total_price = total_price - parseFloat(price); 
+						var new_left_price = left_price -  single_left_price;
+						//$("#total_price_"+id).text(new_total_price);
+						//$("#left_price_"+id).text(new_left_price);
+						$("#count_"+id).text(count);
+						$("#check_product_"+id).data('price',new_total_price);
+						$("#check_product_"+id).data('left_price',new_left_price);
+						updatePrice();
+					}
+				});
+			});
+		});
+	</script>
+</body>
+</html>

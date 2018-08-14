@@ -1,0 +1,98 @@
+{extend name="base" /}
+{block name="main"}
+<form class="layui-form" id="admin">
+    <input type="hidden" name="table" value="member">
+    <input type="hidden" name="id_name" value="id">
+    <table class="layui-table" lay-even="" lay-skin="row" lay-size="sm">
+      <colgroup>
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+        <col width="*">
+      </colgroup>
+      <thead>
+      <tr>
+        <th>医生ID</th>
+        <th>医生姓名</th>
+        <th>执业地址</th>
+        <th>详细地址</th>
+        <th>诊所名称</th>
+        <th>电话</th>
+        <th>微信</th>
+        <th>擅长领域</th>
+        <th>特色疗法</th>
+        <th>个人照片</th>
+        <th>个人简介</th>
+        <th>证件</th>
+        <th>诊所门面</th>
+        <th>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      {foreach name="list" item="vo"}
+      <tr>
+        <td>{$vo.id}</td>
+        <td>{$vo.name}</td>
+        <td>{$vo.province} - {$vo.city}</td>
+        <!--<td><img src="{$vo.faceimgurl}" width="80px" height="80px"></td>-->
+        <td>{$vo.address}</td>
+        <td>{$vo.clinic}</td>
+        <td>{$vo.contact_mobile}</td>
+        <td>{$vo.contact_weixin}</td>
+        <td>{$vo.description}</td>
+        <td>{$vo.tese}</td>
+        <td><a href="{$vo.faceimgurl}" target="_blank"><img src="{$vo.faceimgurl}" width="80px" height="80px"></a></td>
+        <td>{$vo.introduction}</td>
+        <td><a href="{$vo.medical_license}" target="_blank"><img src="{$vo.medical_license}" width="80px" height="80px"></a></td>
+        <td><a href="{$vo.clinic_photo}" target="_blank"><img src="{$vo.clinic_photo}" width="80px" height="80px"></a></td>
+        <td>
+          <a href="javascript:void(0);" parent_id="{$vo.parent_id}" url="{:url('agree')}" id="{$vo.id}" class="layui-btn layui-btn-sm agree">审核通过</a>
+        </td>
+      </tr>
+      {/foreach}
+      </tbody>
+    </table>
+</form>
+<div style="margin-bottom:45px;margin-right:20px;float: right;"></div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    layui.use('list',function () {
+        var layer = layui.layer,
+            $ = layui.jquery;
+
+        //审核通过
+        $('.agree').click(function(){
+            var obj=$(this);
+            var id = obj.attr('id');
+            var parent_id = obj.attr('parent_id');
+            var url = obj.attr('url');
+            layer.confirm('确定审核通过吗?', function(index) {
+                $.ajax({
+                    url:url,
+                    data:{id:id,parent_id:parent_id},
+                    success:function(res) {
+                        layer.msg(res.msg);
+                        if(res.code == 200) {
+                            setTimeout(function(){
+                                location.href = res.url;
+//                                obj.parent().parent().remove();
+                                //window.location.reload()
+                            },1500)
+                        }
+                    }
+                })
+            })
+        });
+    })
+</script>
+{/block}
